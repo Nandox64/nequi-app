@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name"> Nequi Colombia</string>
+    <string name="title_activity_main"> Nequi Colombia</string>
+    <string name="package_name">com.nivel24.nequi</string>
+    <string name="custom_url_scheme">com.nivel24.nequi</string>
+</resources>

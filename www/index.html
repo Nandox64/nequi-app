@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#200020">
+    <meta name="color-scheme" content="dark light">
+    <title>Nequi Colombia</title>
+    <link rel="stylesheet" href="style.css?v=20260508-phone-auth">
+    <link rel="icon" type="image/png" href="faviconV2.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Firebase SDKs (Compat Version for Vanilla JS) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body class="hide-nav">
+
+    <div id="app">
+        <!-- Initial Splash Screen -->
+        <div id="splash-screen" class="splash-screen">
+            <div class="dance-container">
+                <div class="dot dot-1"></div>
+                <div class="dot dot-2"></div>
+            </div>
+        </div>
+
+        <!-- Login Screen (Dark) -->
+        <section id="screen-login" class="screen active login-screen-style">
+
+            <div class="login-top-bar">
+                <div class="clave-dinamica">
+                    <svg class="dynamic-ring-svg" width="22" height="22" viewBox="0 0 22 22">
+                        <circle cx="11" cy="11" r="9" fill="none" stroke="white" stroke-width="2.5"></circle>
+                        <circle class="progress-ring" cx="11" cy="11" r="9" fill="none" stroke="var(--nequi-magenta)"
+                            stroke-width="2.5"></circle>
+                    </svg>
+                    <div>
+                        <span style="font-size: 10px; opacity: 0.7; display: block; margin-bottom: 2px;">Clave
+                            dinámica</span>
+                        <span id="dynamic-code"
+                            style="font-weight: 700; font-size: 16px; letter-spacing: 2px;">123456</span>
+                    </div>
+                    <i data-lucide="copy" style="width: 16px; margin-left: 5px; cursor: pointer;"></i>
+                </div>
+                <div class="btn-help" onclick="showAyuda()">
+                    <span
+                        style="font-size: 16px; font-weight: bold; border: 1px solid white; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;">?</span>
+                    Ayuda
+                </div>
+            </div>
+
+            <div style="width: 100%; text-align: center;">
+                <img src="logo_nequi.png" alt="Nequi" style="width: 220px;">
+            </div>
+
+            <div class="login-actions"
+                style="position: absolute; bottom: 90px; left: 0; width: 100%; padding: 0 40px; text-align: center;">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="login-phone-box">
+                        <span style="color: #EFBEDB; font-weight: 700; font-size: 18px;">+57</span>
+                        <span style="color: rgba(255,255,255,0.3); margin: 0 10px; font-size: 18px;">|</span>
+                        <input type="tel" id="login-phone" value="300 333 2211" readonly>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary login-btn-main" id="btn-login-enter"
+                        style="flex: 1; margin-top: 0; display: flex; justify-content: center; align-items: center; min-height: 56px;">Entra</button>
+                    <button class="btn-primary login-btn-pay"
+                        style="width: 65px; background: var(--nequi-magenta); margin-top: 0; min-height: 56px;"><i
+                            data-lucide="dollar-sign"></i></button>
+                </div>
+            </div>
+
+            <div class="login-footer"
+                style="position: absolute; bottom: 30px; left: 0; width: 100%; padding: 0 25px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; opacity: 0.8;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="btn-add-contact-trigger"
+                        style="cursor: pointer; display: inline-flex; align-items: center; padding: 5px; margin: -5px;">
+                        <i data-lucide="smartphone" style="width: 18px;"></i>
+                    </span>
+                    <span onclick="showScreen('change-phone')" style="cursor: pointer;">¿Cambiaste tu cel?</span>
+                </div>
+                <div id="btn-add-client-trigger" style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <span>by</span>
+                    <img src="logo_by_bancolombia.png" alt="Bancolombia" style="height: 16px;">
+                </div>
+            </div>
+        </section>
+
+        <!-- PIN / Fingerprint Screen -->
+        <section id="screen-pin" class="screen" style="background: var(--nequi-purple-dark); color: white;">
+            <div style="padding: 60px 20px 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('login')"></i>
+            </div>
+
+            <div style="text-align: center; padding: 20px;">
+                <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 40px;">Escribe tu clave</h1>
+
+                <p id="pin-error" class="pin-error"></p>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                </div>
+
+                <p style="font-size: 14px; opacity: 0.6; line-height: 1.4;">No dudamos que seas tú...<br>Pero es mejor
+                    confirmar ;)</p>
+
+                <!-- Keypad -->
+                <div class="keypad">
+                    <div class="key" data-key="1">1</div>
+                    <div class="key" data-key="2">2</div>
+                    <div class="key" data-key="3">3</div>
+                    <div class="key" data-key="4">4</div>
+                    <div class="key" data-key="5">5</div>
+                    <div class="key" data-key="6">6</div>
+                    <div class="key" data-key="7">7</div>
+                    <div class="key" data-key="8">8</div>
+                    <div class="key" data-key="9">9</div>
+                    <div class="key key-empty"></div>
+                    <div class="key" data-key="0">0</div>
+                    <div class="key" data-action="delete"><i data-lucide="delete"></i></div>
+                </div>
+
+                <button onclick="showForgotPin()"
+                    style="background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 20px; border-radius: 6px; margin-top: 20px;">Olvidé
+                    mi clave</button>
+            </div>
+
+            <!-- Fingerprint Modal -->
+            <div id="biometric-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <h3>Autenticación de Huellas</h3>
+                    <p>Confirma la huella digital para continuar</p>
+                    <div class="fingerprint-btn" onclick="authenticate()">
+                        <i data-lucide="fingerprint" style="width: 35px; height: 35px; color: white;"></i>
+                        <span>Sensor táctil</span>
+                    </div>
+                    <button class="modal-cancel" onclick="closeModal()">CANCELAR</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Screen -->
+        <section id="screen-dashboard" class="screen">
+            <header>
+                <div class="header-top">
+                    <div class="user-profile" id="btn-profile">
+                        <div class="avatar">
+                            <img src="img_perfil.png" alt="Profile">
+                        </div>
+                        <div class="user-info">
+                            <h3>Hola,</h3>
+                            <p id="user-name">Usuario</p>
+                        </div>
+                    </div>
+                    <div class="header-icons">
+                        <div class="header-icon-btn" id="btn-notifications"><i data-lucide="bell"></i></div>
+                        <div class="header-icon-btn" onclick="showAyuda()"><i
+                                data-lucide="help-circle"></i></div>
+                        <div class="header-icon-btn" id="btn-logout-trigger"><i data-lucide="lock" id="btn-logout"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-title">
+                        Depósito Bajo Monto
+                        <span id="btn-toggle-visibility"
+                            style="cursor: pointer; display: inline-flex; align-items: center; margin-left: 5px;">
+                            <i data-lucide="eye-off" style="width: 16px;"></i>
+                        </span>
+                    </div>
+                    <div class="balance-amount">$ <span id="user-balance">1.240.000,40</span></div>
+                    <div style="font-size: 14px; opacity: 0.8; margin-top: -5px; margin-bottom: 12px;">
+                        Total $ <span id="total-balance-dashboard">1.240.000,40</span>
+                    </div>
+                    <button class="total-label">Tu plata <i data-lucide="chevron-down"
+                            style="width: 14px; height: 14px;"></i></button>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Banner Slider -->
+                <div class="banner-slider">
+                    <!-- Banner 1: Claro -->
+                    <div class="banner-card"
+                        style="background: linear-gradient(to right, #D1CADA, #E7E3F1); border-radius: 10px;">
+                        <div style="flex: 1; text-align: left;">
+                            <h4 style="font-size: 16px; font-weight: 800; color: #200020; margin-bottom: 4px;">Tu
+                                factura Claro</h4>
+                            <p style="font-size: 12px; color: #554455; margin-bottom: 15px; line-height: 1.2;">Págala
+                                sin salir de casa desde Nequi</p>
+                            <button onclick="showScreen('services')"
+                                style="background: #1A001A; color: white; border: none; padding: 8px 18px; border-radius: 5px; font-size: 13px; font-weight: 700; cursor: pointer;">Pagar</button>
+                        </div>
+                        <img class="banner-brand-logo" src="logo_claro.png" alt="Claro"
+                            style="width: 85px; height: 85px; object-fit: contain; margin-left: 10px;">
+                    </div>
+                    <!-- Banner 2: Tarjeta Nequi -->
+                    <div class="banner-card"
+                        style="background: linear-gradient(to right, #D1CADA, #E7E3F1); border-radius: 10px;">
+                        <div style="flex: 1; text-align: left;">
+                            <h4 style="font-size: 16px; font-weight: 800; color: #200020; margin-bottom: 4px;">Tu
+                                Tarjeta Nequi Visa</h4>
+                            <p style="font-size: 12px; color: #554455; margin-bottom: 15px; line-height: 1.2;">Si la
+                                pides digital se activa al instante</p>
+                            <button onclick="showToast('Solicitar tarjeta Nequi Visa - Próximamente', 'info')"
+                                style="background: #1A001A; color: white; border: none; padding: 8px 18px; border-radius: 5px; font-size: 13px; font-weight: 700; cursor: pointer;">Pedir
+                                tarjeta</button>
+                        </div>
+                        <img class="banner-brand-logo" src="logo_tarjeta_nequi.png" alt="Tarjeta Nequi"
+                            style="width: 85px; height: 85px; object-fit: contain; margin-left: 10px;">
+                    </div>
+                </div>
+
+                <!-- Group 1: Favoritos -->
+                <h3 class="section-title">♡ Tus favoritos</h3>
+                <div class="dashboard-grid">
+                    <div class="dashboard-action" id="btn-pockets">
+                        <div class="action-square"><img src="logo_bolsillos.png" alt="Bolsillos"></div>
+                        <span>Bolsillos</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showScreen('tarjeta')">
+                        <div class="action-square"><img src="logo_tarjeta.png" alt="Tarjeta"></div>
+                        <span>Tarjeta</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showScreen('colchon')">
+                        <div class="action-square"><img src="logo_colchon.png" alt="Colchón"></div>
+                        <span>Colchón</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showToast('Agregar a favoritos - Próximamente', 'info')">
+                        <div class="action-square"><img src="logo_agrega.png" alt="Agregar"></div>
+                        <span>Agregar</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showScreen('transfiya')">
+                        <div class="action-square"><img src="logo_transfiya.png" alt="Transfiya"></div>
+                        <span>Transfiya</span>
+                    </div>
+                </div>
+
+                <!-- Group 2: Sugeridos -->
+                <h3 class="section-title">✨ Sugeridos Nequi</h3>
+                <div class="dashboard-grid">
+                    <div class="dashboard-action" onclick="showServiceDetail('tullave')">
+                        <div class="action-square"><img src="logo_tullave.png" alt="Maas tullave"></div>
+                        <span>Maas tullave</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showServiceDetail('claro')">
+                        <div class="action-square"><img src="logo_claro.png" alt="Claro"></div>
+                        <span>Claro</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showServiceDetail('tigo')">
+                        <div class="action-square"><img src="logo_tigo.png" alt="Tigo"></div>
+                        <span>Tigo</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showServiceDetail('wom')">
+                        <div class="action-square"><img src="logo_wom.png" alt="Wom"></div>
+                        <span>Wom</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showScreen('prestamos')">
+                        <div class="action-square"><img src="logo_créditos.png" alt="Préstamos"></div>
+                        <span>Préstamos</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showScreen('bre-b')">
+                        <div class="action-square"><img src="logo_bre-b.png" alt="Bre-B"></div>
+                        <span>Bre-B</span>
+                    </div>
+                    <div class="dashboard-action" onclick="showScreen('negocios')">
+                        <div class="action-square"><img src="logo_app_nequi_negocios.png" alt="Nequi Negocios"></div>
+                        <span>Negocios</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notifications Screen -->
+        <section id="screen-notifications" class="screen" style="background: var(--nequi-bg);">
+            <div
+                style="padding: 60px 20px 10px 20px; display: flex; align-items: center; justify-content: center; position: relative; background: var(--nequi-bg); position: sticky; top: 0; z-index: 10;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="position: absolute; left: 20px; cursor: pointer; color: var(--nequi-purple-dark); width: 28px; height: 28px;"></i>
+                <h1 style="font-size: 18px; font-weight: 800; color: var(--nequi-purple-dark); margin: 0;">
+                    Notificaciones</h1>
+            </div>
+
+            <div style="padding: 10px 20px;">
+                <!-- Tabs: Recibidas / En espera -->
+                <div style="display: flex; background: #F4F4F4; border-radius: 8px; padding: 4px; margin-top: 5px;">
+                    <div class="notif-tab active"
+                        style="flex: 1; text-align: center; padding: 10px; border-radius: 6px; background: var(--nequi-magenta); font-weight: 800; font-size: 14px; color: white; box-shadow: 0 2px 4px rgba(218, 0, 129, 0.2); cursor: pointer; transition: all 0.2s;">
+                        Recibidas (0)</div>
+                    <div class="notif-tab"
+                        style="flex: 1; text-align: center; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 14px; color: #888; cursor: pointer; transition: all 0.2s;">
+                        En espera (0)</div>
+                </div>
+            </div>
+
+            <div id="notifications-list" style="flex: 1; padding-bottom: 20px;"></div>
+        </section>
+
+        <!-- Pockets Screen -->
+        <section id="screen-pockets" class="screen" style="background: var(--nequi-bg);">
+            <div
+                style="padding: 60px 20px 10px 20px; display: flex; align-items: center; justify-content: center; position: relative; background: var(--nequi-bg); position: sticky; top: 0; z-index: 10;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="position: absolute; left: 20px; cursor: pointer; color: var(--nequi-purple-dark); width: 28px; height: 28px;"></i>
+                <h1 style="font-size: 18px; font-weight: 800; color: var(--nequi-purple-dark); margin: 0;">Bolsillos
+                </h1>
+            </div>
+
+            <div class="pockets-empty"
+                style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; margin-top: -60px;">
+                <img src="bolsillos.png" alt="Bolsillos" style="width: 220px; margin-bottom: 24px; max-width: 100%;">
+                <p style="font-size: 16px; color: #888; font-weight: 600;">Aquí estarán tus Bolsillos</p>
+            </div>
+
+            <div class="pockets-list" style="flex: 1; padding: 0 20px; display: none; overflow-y: auto;"></div>
+
+            <div style="padding: 20px; padding-bottom: 40px;">
+                <button class="btn-primary" style="margin-top: 0;" onclick="showCreatePocket()">Crear mi primer
+                    Bolsillo</button>
+            </div>
+        </section>
+
+        <!-- Send Money Screen -->
+        <section id="screen-send" class="screen" style="background: var(--nequi-white); z-index: 2000;">
+            <div style="padding: 60px 20px 10px 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <i data-lucide="arrow-left" class="btn-back" onclick="showScreen('dashboard')"
+                        style="cursor: pointer; width: 28px; height: 28px; color: var(--nequi-text);"></i>
+                    <div id="btn-toggle-accordion"
+                        style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="chevron-down" id="accordion-icon"
+                            style="width: 28px; height: 28px; transition: transform 0.3s; color: var(--nequi-text);"></i>
+                    </div>
+                </div>
+                <h1 style="font-size: 26px; font-weight: 800; color: var(--nequi-purple-dark);">Envía plata</h1>
+            </div>
+
+            <div id="balance-accordion"
+                style="display: none; padding: 0 25px 20px; margin-top: 10px; border-bottom: 1px solid #F0F0F0; animation: fadeIn 0.3s;">
+                <div
+                    style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 12px; color: #555;">
+                    <span>Disponible</span>
+                    <span style="font-weight: 700; color: var(--nequi-purple-dark);" id="acc-available">$ 0,00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 14px; color: #555;">
+                    <span>Total</span>
+                    <span style="font-weight: 700; color: var(--nequi-purple-dark);" id="acc-total">$ 0,00</span>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <input type="tel" id="input-phone" placeholder=" " maxlength="10" inputmode="numeric"
+                            pattern="[0-9]*" style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Cel</label>
+                        <i data-lucide="user-plus" style="color: var(--nequi-magenta); cursor: pointer;"></i>
+                    </div>
+                    <p id="msg-phone" class="field-message hint" style="color: var(--nequi-text-gray);">Revisa bien el
+                        número para enviarle a la persona
+                        correcta.</p>
+                    <p id="recipient-name" class="contact-name-hint" style="color: var(--nequi-purple-dark);"></p>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <input type="number" id="input-amount" placeholder=" " style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">¿Cuánto?</label>
+                    </div>
+                    <p id="msg-amount" class="field-message"></p>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <textarea id="input-message" placeholder=" " rows="1"
+                            style="width: 100%; border: none; outline: none; resize: none; font-size: 16px; font-weight: 500; font-family: inherit; background: transparent; padding-top: 15px; color: var(--nequi-text);"></textarea>
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Mensaje</label>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <p style="font-size: 14px; font-weight: 600; color: var(--nequi-magenta); margin-bottom: 10px;">
+                        Escoge de donde saldrá la plata</p>
+                    <div class="promo-card" id="btn-select-source" style="margin-bottom: 0; cursor: pointer;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div
+                                style="width: 40px; height: 40px; background: var(--nequi-magenta); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
+                                <i data-lucide="layout-grid" style="width: 20px;"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 16px; color: white;">Disponible</h4>
+                                <!-- El saldo se oculta según la solicitud -->
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right"></i>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="btn-confirm-send" style="margin-top: 40px;">Sigue</button>
+            </div>
+        </section>
+
+        <!-- Available Detail Screen -->
+        <section id="screen-available-detail" class="screen" style="background: var(--nequi-white);">
+            <div style="padding: 60px 20px 10px 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('send')"
+                    style="margin-bottom: 20px; display: inline-block; cursor: pointer; color: var(--nequi-text);"></i>
+            </div>
+
+            <div class="available-card-detail">
+                <div class="available-pattern">
+                    <div class="pattern-square"
+                        style="top: 10px; left: 10px; width: 35px; height: 18px; background: rgba(255,255,255,0.4);">
+                    </div>
+                    <div class="pattern-square"
+                        style="top: 10px; left: 60px; width: 22px; height: 22px; background: rgba(255,255,255,0.7);">
+                    </div>
+                    <div class="pattern-square"
+                        style="top: 45px; left: 20px; width: 28px; height: 28px; background: rgba(255,255,255,0.4);">
+                    </div>
+                    <div class="pattern-square"
+                        style="top: 40px; left: 65px; width: 45px; height: 45px; background: rgba(255,255,255,0.5);">
+                    </div>
+                </div>
+                <div class="available-info-row">
+                    <span>Disponible</span>
+                    <span id="detail-available-balance">$ 0.00</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Confirm Send Screen -->
+        <section id="screen-confirm-send" class="screen" style="background: var(--nequi-white);">
+            <div id="confirm-warning-toast" class="warning-toast">Revisa bien esta info, por que si le envías la plata a
+                la persona incorrecta en Nequi no podremos recuperarla.</div>
+            <div style="padding: 30px 20px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <i data-lucide="arrow-left" onclick="showScreen('send')" style="cursor: pointer;"></i>
+                <span style="font-size: 20px; font-weight: bold; cursor: pointer;">?</span>
+            </div>
+            <div style="padding: 0 25px;">
+                <h1 style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark); margin-bottom: 25px;">
+                    Revisa los datos antes de enviar la plata</h1>
+                <p style="font-weight: 700; color: var(--nequi-purple-dark); margin-bottom: 10px;">Resumen del envío</p>
+
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span class="summary-label">Vas a enviar a:</span>
+                        <span class="summary-value magenta" id="confirm-recipient-name">Nombre</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Nº de celular</span>
+                        <span class="summary-value" id="confirm-recipient-phone">000 000 0000</span>
+                    </div>
+                </div>
+
+                <p style="font-weight: 700; color: var(--nequi-purple-dark); margin-bottom: 5px;">¿De dónde saldrá la
+                    plata?</p>
+                <div class="source-box">
+                    <div
+                        style="width: 40px; height: 40px; background: var(--nequi-magenta); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i data-lucide="layout-grid" style="width: 20px;"></i>
+                    </div>
+                    <span style="font-weight: 600; color: var(--nequi-purple-dark);">Disponible</span>
+                </div>
+
+                <div style="margin-top: 60px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 700; color: var(--nequi-purple-dark);">Total a enviar</span>
+                    <span style="font-size: 24px; font-weight: 800; color: var(--nequi-magenta);" id="confirm-amount">$
+                        1.00</span>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <button class="btn-primary" id="btn-final-send">Enviar</button>
+                    <button class="btn-outline-dark" onclick="showScreen('send')" style="margin-top: 15px;">Corregir
+                        datos</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Screen (Receipt Detail) -->
+        <section id="screen-success" class="screen" style="background: #F4F4F4;">
+            <div style="padding: 60px 20px 10px; display: flex; align-items: center; gap: 15px;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')" style="cursor: pointer;"></i>
+                <h2 style="font-size: 18px; font-weight: 700; color: var(--nequi-purple-dark);">Detalle del movimiento
+                </h2>
+                <div style="margin-left: auto; display: flex; gap: 15px;">
+                    <span style="font-weight: 700; cursor: pointer;">?</span>
+                    <i data-lucide="share-2" id="btn-share-receipt" style="width: 20px; cursor: pointer;"></i>
+                </div>
+            </div>
+
+            <div class="receipt-card">
+                <div class="receipt-scallop"></div>
+                <div class="status-badge">
+                    <div
+                        style="width: 20px; height: 20px; background: #FFEDF4; color: #D66D8C; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                        <i data-lucide="arrow-down" style="width: 12px;"></i>
+                    </div>
+                    Envío Realizado
+                </div>
+
+                <!-- QR se integrará en el fondo del contenedor principal -->
+                <div class="receipt-qr-wrap">
+                    <div id="receipt-random-qr" class="receipt-random-qr" aria-label="Codigo QR"></div>
+                </div>
+                <div class="qr-scan-msg">
+                    <i data-lucide="info"></i>
+                    <span>¡Escanea este QR con Nequi para verificar tu envío al instante!</span>
+                </div>
+                <div class="receipt-details">
+                    <div class="receipt-item">
+                        <label>Para</label>
+                        <p id="receipt-name">Destinatario</p>
+                    </div>
+                    <div class="receipt-item">
+                        <label>Conversación</label>
+                        <p id="receipt-message">Sin mensaje</p>
+                    </div>
+                    <div class="receipt-item">
+                        <label>¿Cuánto?</label>
+                        <p id="receipt-amount">$ 0,00</p>
+                    </div>
+                    <div class="receipt-item">
+                        <label>Número Nequi</label>
+                        <p id="receipt-phone">000 000 0000</p>
+                    </div>
+                    <div class="receipt-item">
+                        <label>Fecha</label>
+                        <p id="receipt-date">28 de abril de 2026 a las 09:06 a. m.</p>
+                    </div>
+                    <div class="receipt-item">
+                        <label>Referencia</label>
+                        <p id="receipt-ref">M03123075</p>
+                    </div>
+                    <div class="receipt-item">
+                        <label>¿De dónde salió la plata?</label>
+                        <p>Disponible</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Movements Screen -->
+        <section id="screen-movements" class="screen" style="background: var(--nequi-white);">
+            <div
+                style="padding: 40px 20px 15px; background: var(--nequi-white); position: sticky; top: 0; z-index: 10;">
+                <h1
+                    style="font-size: 18px; font-weight: 800; color: var(--nequi-purple-dark); text-align: center; margin-bottom: 20px;">
+                    Movimientos</h1>
+
+                <!-- Search Bar -->
+                <div
+                    style="background: #F4F4F4; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; color: #888; margin-top: 5px;">
+                    <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+                    <span style="font-size: 15px; font-weight: 500;">Busca</span>
+                </div>
+
+                <!-- Tabs: Hoy / Más Movimientos -->
+                <div style="display: flex; background: #F4F4F4; border-radius: 8px; padding: 4px; margin-top: 15px;">
+                    <div id="tab-hoy" class="mov-main-tab active"
+                        style="flex: 1; text-align: center; padding: 10px; border-radius: 6px; background: var(--nequi-magenta); font-weight: 800; font-size: 14px; color: white; box-shadow: 0 2px 4px rgba(218, 0, 129, 0.2); cursor: pointer; transition: all 0.2s;">
+                        Hoy</div>
+                    <div id="tab-mas-mov" class="mov-main-tab"
+                        style="flex: 1; text-align: center; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 14px; color: #888; cursor: pointer; transition: all 0.2s;">
+                        Más Movimientos</div>
+                </div>
+            </div>
+
+            <div class="content" style="padding: 0;">
+                <div id="movements-list" class="list-panel" style="padding: 0 20px;"></div>
+            </div>
+        </section>
+
+        <!-- Services Screen -->
+        <section id="screen-services" class="screen">
+            <div style="display:flex;align-items:center;justify-content:center;padding:calc(46px + env(safe-area-inset-top,0px)) 22px 16px;background:var(--nequi-white);border-bottom:1px solid #ECE8F0;position:relative;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="position:absolute;left:16px;cursor:pointer;color:var(--nequi-purple-dark);width:26px;height:26px;"></i>
+                <h1 style="font-size:20px;font-weight:800;color:var(--nequi-purple-dark);margin:0;">Servicios</h1>
+                <i data-lucide="sliders-horizontal" style="position:absolute;right:16px;cursor:pointer;color:var(--nequi-text-gray);"></i>
+            </div>
+            <div class="content">
+                <div id="services-grid" class="services-grid"></div>
+            </div>
+        </section>
+
+
+        <!-- Perfil Screen -->
+        <section id="screen-perfil" class="screen" style="background: var(--nequi-bg);">
+            <div style="padding: 50px 20px 25px; background: var(--nequi-purple-dark); color: white; text-align: center;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="cursor: pointer; color: white; position: absolute; left: 20px; top: 50px;"></i>
+                <div class="avatar" style="width: 70px; height: 70px; margin: 0 auto 15px;">
+                    <img src="img_perfil.png" alt="Profile">
+                </div>
+                <h2 id="perfil-name" style="font-size: 20px; font-weight: 800;">Usuario</h2>
+                <p id="perfil-phone" style="opacity: 0.7; font-size: 14px;">300 333 2211</p>
+            </div>
+            <div class="content" style="flex: 1;">
+                <div class="sheet-card" onclick="showEditProfile()">
+                    <div class="card-icon"><i data-lucide="edit"></i></div>
+                    <div class="card-text"><h4>Editar perfil</h4><p>Nombre y datos personales</p></div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+                <div class="sheet-card" onclick="showToast('Configuración de seguridad - Próximamente', 'info')">
+                    <div class="card-icon"><i data-lucide="shield"></i></div>
+                    <div class="card-text"><h4>Seguridad</h4><p>Clave, huella y más</p></div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+                <div class="sheet-card" onclick="showChangePassword()">
+                    <div class="card-icon"><i data-lucide="lock" style="color:var(--nequi-magenta);"></i></div>
+                    <div class="card-text"><h4>Cambiar contraseña</h4><p>Actualiza tu clave de acceso</p></div>
+                    <i data-lucide="chevron-right" style="color:var(--nequi-text-gray);"></i>
+                </div>
+                <div class="sheet-card" onclick="showAyuda()">
+                    <div class="card-icon"><i data-lucide="help-circle"></i></div>
+                    <div class="card-text"><h4>Ayuda</h4><p>Centro de ayuda</p></div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+                <button class="btn-primary" style="background:#E53935;box-shadow:none;margin-top:40px;"
+                    onclick="if(confirm('¿Cerrar sesión?')){showScreen('login')}">Cerrar sesión</button>
+                <p style="text-align:center;color:#999;font-size:12px;margin-top:20px;">Nequi v2.0.0</p>
+            </div>
+        </section>
+
+        <!-- Tarjeta Screen -->
+        <section id="screen-tarjeta" class="screen" style="background: var(--nequi-bg);">
+            <div style="padding: 50px 20px 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="cursor: pointer; color: var(--nequi-purple-dark); margin-bottom: 20px; display: inline-block;"></i>
+                <h1 style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark);">Tu Tarjeta Nequi</h1>
+            </div>
+            <div class="content" style="flex: 1;">
+                <div id="tarjeta-card"
+                    style="background: linear-gradient(135deg, #200020, #DA0081); border-radius: 14px; padding: 25px; color: white; margin-bottom: 20px; min-height: 200px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+                        <span style="font-size: 12px; opacity: 0.8;">Nequi Visa</span>
+                        <img src="logo_n.png" alt="Nequi" style="width: 35px;">
+                    </div>
+                    <p id="tarjeta-number" style="font-size: 20px; letter-spacing: 3px; font-weight: 600; margin-bottom: 20px;">**** **** **** 8942</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <p style="font-size: 11px; opacity: 0.7;">Titular</p>
+                            <p id="tarjeta-holder" style="font-weight: 700; font-size: 14px;">Usuario</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="font-size: 11px; opacity: 0.7;">Saldo</p>
+                            <p id="tarjeta-balance" style="font-weight: 700; font-size: 16px;">$ 0</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button id="btn-tarjeta-toggle" class="btn-small" style="flex: 1;" onclick="toggleTarjetaStatus()">Bloquear</button>
+                    <button class="btn-small" style="flex: 1; background: var(--nequi-magenta);" onclick="showToast('Solicitar tarjeta digital - Próximamente', 'info')">Digital</button>
+                </div>
+                <div class="sheet-card" onclick="showScreen('movements')">
+                    <div class="card-icon"><i data-lucide="arrow-down-up"></i></div>
+                    <div class="card-text"><h4>Movimientos</h4><p>Historial de transacciones</p></div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Colchón Screen -->
+        <section id="screen-colchon" class="screen" style="background: var(--nequi-bg);">
+            <div style="padding: 50px 20px 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="cursor: pointer; color: var(--nequi-purple-dark); margin-bottom: 20px; display: inline-block;"></i>
+                <h1 style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark);">Colchón</h1>
+            </div>
+            <div class="content" style="flex: 1; display: flex; flex-direction: column;">
+                <div style="background: white; border-radius: 14px; padding: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                    <p style="font-size: 14px; color: #888; margin-bottom: 8px;">Apartado</p>
+                    <p id="colchon-balance" style="font-size: 32px; font-weight: 800; color: var(--nequi-purple-dark);">$ 250.000</p>
+                    <p style="font-size: 13px; color: #999; margin-top: 8px;">Tus ahorros guardados</p>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn-primary" style="flex: 1; margin-top: 0;" onclick="showColchonAdd()">Meter plata</button>
+                    <button class="btn-outline-dark" style="flex: 1; margin-top: 0;" onclick="showColchonWithdraw()">Sacar plata</button>
+                </div>
+                <div id="colchon-mov-list" style="flex: 1;"></div>
+            </div>
+        </section>
+
+        <!-- Bancolombia Screen -->
+        <section id="screen-bancolombia" class="screen" style="background: var(--nequi-white);">
+            <div style="padding: 60px 20px 10px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                        style="cursor: pointer; color: var(--nequi-purple-dark);"></i>
+                    <h1 style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark);">Enviar a Bancolombia</h1>
+                </div>
+            </div>
+            <div class="content">
+                <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Envía plata a cualquier cuenta Bancolombia (ahorros o corriente).</p>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <button id="btn-account-savings" class="btn-small" style="flex:1;background:var(--nequi-magenta);color:white;font-weight:700;" onclick="selectBancolombiaAccountType('ahorros')">Ahorros</button>
+                        <button id="btn-account-checking" class="btn-small" style="flex:1;background:#E0E0E0;color:#666;font-weight:600;" onclick="selectBancolombiaAccountType('corriente')">Corriente</button>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="tel" id="bancolombia-account" placeholder=" " maxlength="16" inputmode="numeric" style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Número de cuenta</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="tel" id="bancolombia-doc" placeholder=" " maxlength="10" inputmode="numeric" style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Documento del titular</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="number" id="bancolombia-amount" placeholder=" " style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">¿Cuánto?</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <textarea id="bancolombia-message" placeholder=" " rows="1" style="width:100%;border:none;outline:none;resize:none;font-size:16px;font-weight:500;font-family:inherit;background:transparent;padding-top:15px;color:var(--nequi-text);"></textarea>
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Mensaje</label>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="confirmBancolombia()">Enviar a Bancolombia</button>
+            </div>
+        </section>
+
+        <!-- Transfiya Screen -->
+        <section id="screen-transfiya" class="screen" style="background: var(--nequi-white);">
+            <div style="padding: 60px 20px 10px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                        style="cursor: pointer; color: var(--nequi-purple-dark);"></i>
+                    <h1 style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark);">Transfiya</h1>
+                </div>
+            </div>
+            <div class="content">
+                <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Envía plata a otros bancos usando solo el número de celular.</p>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="tel" id="transfiya-phone" placeholder=" " maxlength="10" inputmode="numeric" style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Celular del destinatario</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="text" id="transfiya-bank" placeholder=" " style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Banco destino</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="number" id="transfiya-amount" placeholder=" " style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">¿Cuánto?</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <textarea id="transfiya-message" placeholder=" " rows="1" style="width:100%;border:none;outline:none;resize:none;font-size:16px;font-weight:500;font-family:inherit;background:transparent;padding-top:15px;color:var(--nequi-text);"></textarea>
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Mensaje</label>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="confirmTransfiya()">Enviar por Transfiya</button>
+            </div>
+        </section>
+
+        <!-- Service Detail Screen -->
+        <section id="screen-servicio-detalle" class="screen" style="background: var(--nequi-white);">
+            <div style="padding: 60px 20px 10px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <i data-lucide="arrow-left" onclick="showScreen('services')"
+                        style="cursor: pointer; color: var(--nequi-purple-dark);"></i>
+                    <h1 id="servicio-title" style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark);">Servicio</h1>
+                </div>
+            </div>
+            <div class="content">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px; padding: 15px; background: #F7F5FA; border-radius: 10px;">
+                    <img id="servicio-logo" src="" alt="" style="width: 50px; height: 50px; object-fit: contain;">
+                    <div>
+                        <p id="servicio-name" style="font-size: 18px; font-weight: 700; color: var(--nequi-purple-dark);">Nombre</p>
+                        <p style="font-size: 13px; color: #888;">Paga tu factura rápido</p>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="tel" id="servicio-ref" placeholder=" " maxlength="20" inputmode="numeric" style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Número de factura / referencia</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="number" id="servicio-amount" placeholder=" " style="color: var(--nequi-text);">
+                        <label class="floating-label" style="color: var(--nequi-text-gray);">Valor a pagar</label>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="confirmServicePayment()">Pagar</button>
+            </div>
+        </section>
+
+        <!-- Préstamos Screen -->
+        <section id="screen-prestamos" class="screen" style="background: var(--nequi-bg);">
+            <div style="padding: 50px 20px 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="cursor: pointer; color: var(--nequi-purple-dark); margin-bottom: 20px; display: inline-block;"></i>
+                <h1 style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark);">Préstamos</h1>
+            </div>
+            <div class="content" style="flex: 1;">
+                <div style="background: white; border-radius: 14px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                    <p style="font-size: 14px; color: #888;">Pre-aprobado</p>
+                    <p style="font-size: 32px; font-weight: 800; color: var(--nequi-magenta); margin: 10px 0;" id="prestamo-available">$ 5.000.000</p>
+                    <p style="font-size: 13px; color: #999;">Tasa fija, sin papeleo</p>
+                </div>
+                <button class="btn-primary" onclick="solicitarPrestamo()" style="margin-bottom: 15px;">Solicitar préstamo</button>
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--nequi-purple-dark); margin: 25px 0 15px;">Tus préstamos activos</h3>
+                <div id="prestamos-list">
+                    <div style="text-align: center; padding: 30px; color: #888; font-size: 14px;">No tienes préstamos activos</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bre-B Screen -->
+        <section id="screen-bre-b" class="screen" style="background: var(--nequi-white);">
+            <div style="padding: 50px 20px 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="cursor: pointer; color: var(--nequi-purple-dark); margin-bottom: 20px; display: inline-block;"></i>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                    <h1 style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark);">Bre-B</h1>
+                    <span class="badge-nuevo">Nuevo</span>
+                </div>
+                <p style="font-size: 14px; color: #666; line-height: 1.5;">Transferencias inmediatas entre diferentes bancos usando tu celular.</p>
+            </div>
+            <div class="content" style="flex: 1;">
+                <div style="background: #F0F8FF; border-radius: 10px; padding: 18px; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start;">
+                    <i data-lucide="info" style="width: 20px; color: var(--nequi-magenta); flex-shrink: 0;"></i>
+                    <p style="font-size: 13px; color: #555; line-height: 1.4;">Con Bre-B puedes enviar y recibir plata al instante desde cualquier banco de Colombia usando solo tu celular.</p>
+                </div>
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--nequi-purple-dark); margin-bottom: 12px;">Tus llaves Bre-B</h3>
+                <div id="breb-keys-list">
+                    <div class="sheet-card" style="margin-bottom: 8px;">
+                        <div class="card-icon"><i data-lucide="key"></i></div>
+                        <div class="card-text"><h4>3003332211@breb</h4><p>Llave principal</p></div>
+                    </div>
+                </div>
+                <button class="btn-outline-dark" onclick="showAddBrebKey()" style="margin-top: 10px;">+ Agregar llave</button>
+
+                <!-- Add Breb Key Inline Form -->
+                <div id="breb-add-key-form" style="display:none;margin-top:15px;padding:15px;background:#F7F5FA;border-radius:10px;">
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <div class="input-container floating">
+                            <input type="text" id="breb-new-key" placeholder=" " style="color:var(--nequi-text);" maxlength="20">
+                            <label class="floating-label" style="color:var(--nequi-text-gray);">Nueva llave (ej: 3001112233@breb)</label>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn-small" style="flex:1;background:#E0E0E0;color:#666;font-weight:600;" onclick="closeAddBrebKey()">Cancelar</button>
+                        <button class="btn-small" style="flex:1;background:var(--nequi-magenta);color:white;font-weight:700;" onclick="confirmAddBrebKey()">Guardar</button>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="toggleBrebSendForm()" style="margin-top: 20px;">Enviar con Bre-B</button>
+
+                <!-- Bre-B Send Form -->
+                <div id="breb-send-form" style="display:none;margin-top:15px;padding:15px;background:#F7F5FA;border-radius:10px;">
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label style="font-size:13px;font-weight:600;color:var(--nequi-purple-dark);display:block;margin-bottom:6px;">Tu llave</label>
+                        <select id="breb-send-key" style="width:100%;padding:12px;border:2px solid #E0E0E0;border-radius:8px;font-size:15px;font-weight:500;font-family:inherit;background:white;color:var(--nequi-text);outline:none;"></select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <div class="input-container floating">
+                            <input type="tel" id="breb-send-phone" placeholder=" " maxlength="10" inputmode="numeric" style="color:var(--nequi-text);">
+                            <label class="floating-label" style="color:var(--nequi-text-gray);">Celular del destinatario</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <div class="input-container floating">
+                            <input type="number" id="breb-send-amount" placeholder=" " style="color:var(--nequi-text);">
+                            <label class="floating-label" style="color:var(--nequi-text-gray);">¿Cuánto?</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <div class="input-container floating">
+                            <textarea id="breb-send-message" placeholder=" " rows="1" style="width:100%;border:none;outline:none;resize:none;font-size:16px;font-weight:500;font-family:inherit;background:transparent;padding-top:15px;color:var(--nequi-text);"></textarea>
+                            <label class="floating-label" style="color:var(--nequi-text-gray);">Mensaje</label>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="confirmBrebSend()">Enviar con Bre-B</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Negocios Screen -->
+        <section id="screen-negocios" class="screen" style="background: var(--nequi-bg);">
+            <div style="padding: 50px 20px 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="cursor: pointer; color: var(--nequi-purple-dark); margin-bottom: 20px; display: inline-block;"></i>
+                <h1 style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark);">Nequi Negocios</h1>
+            </div>
+            <div class="content" style="flex: 1;">
+                <div style="background: white; border-radius: 14px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                    <img src="logo_nequi.png" alt="Nequi" style="width: 100px; margin-bottom: 15px;">
+                    <p style="font-size: 15px; color: #666; line-height: 1.5;">La solución de pagos digitales para tu negocio. Recibe pagos al instante, sin datafono y sin comisiones.</p>
+                </div>
+                <div class="sheet-card" onclick="showToast('WhatsApp: 3214484092', 'info')">
+                    <div class="card-icon"><i data-lucide="message-circle"></i></div>
+                    <div class="card-text"><h4>Contáctanos</h4><p>WhatsApp 3214484092</p></div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+                <div class="sheet-card" onclick="showToast('Más información en nequi.com/negocios', 'info')">
+                    <div class="card-icon"><i data-lucide="external-link"></i></div>
+                    <div class="card-text"><h4>Más información</h4><p>Conoce todos los beneficios</p></div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+                <button class="btn-primary" style="margin-top: 30px;" onclick="showToast('Solicitar Nequi Negocios - Próximamente', 'info')">Solicitar ahora</button>
+            </div>
+        </section>
+
+        <!-- Ayuda Screen -->
+        <section id="screen-ayuda" class="screen" style="background: var(--nequi-bg);">
+            <div style="padding:50px 20px 20px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                    <i data-lucide="arrow-left" onclick="goBackFromAyuda()"
+                        style="cursor:pointer;color:var(--nequi-purple-dark);"></i>
+                    <span style="font-size:16px;font-weight:700;color:var(--nequi-purple-dark);">Ayuda</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 16px;">
+                    <span style="font-size:18px;font-weight:800;color:var(--nequi-purple-dark);">¡Hola! ¿Cómo podemos ayudarte?</span>
+                    <img src="logo_n_2.png" alt="N" style="width:34px;">
+                </div>
+                <div style="background:#F4F4F4;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;color:#888;">
+                    <i data-lucide="search" style="width:18px;height:18px;"></i>
+                    <span style="font-size:14px;font-weight:500;">Busca tu duda</span>
+                </div>
+            </div>
+            <div class="content" style="flex:1;padding-top:0;">
+                <div class="sheet-card" onclick="showToast('Reportar un movimiento - Próximamente', 'info')">
+                    <div class="card-icon"><i data-lucide="alert-triangle" style="color:var(--nequi-magenta);"></i></div>
+                    <div class="card-text"><h4>Reportar un movimiento</h4></div>
+                    <i data-lucide="chevron-right" style="color:var(--nequi-text-gray);"></i>
+                </div>
+                <div class="sheet-card" onclick="showToast('Estado de tus casos - Próximamente', 'info')">
+                    <div class="card-icon"><i data-lucide="clipboard-list" style="color:var(--nequi-purple-dark);"></i></div>
+                    <div class="card-text"><h4>Estado de tus casos</h4></div>
+                    <i data-lucide="chevron-right" style="color:var(--nequi-text-gray);"></i>
+                </div>
+                <div class="sheet-card" onclick="showToast('Evalúanos - Próximamente', 'info')">
+                    <div class="card-icon"><i data-lucide="star" style="color:#FFB800;"></i></div>
+                    <div class="card-text"><h4>Evalúanos</h4></div>
+                    <i data-lucide="chevron-right" style="color:var(--nequi-text-gray);"></i>
+                </div>
+                <div class="sheet-card" onclick="showToast('Valida tu identidad - Próximamente', 'info')">
+                    <div class="card-icon"><i data-lucide="fingerprint" style="color:var(--nequi-magenta);"></i></div>
+                    <div class="card-text">
+                        <h4>Valida tu identidad</h4>
+                        <p style="font-size:12px;color:#888;margin-top:2px;">Si estás hablando con Nequi por chat o llamada continúa aquí</p>
+                    </div>
+                    <i data-lucide="chevron-right" style="color:var(--nequi-text-gray);"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-screen="dashboard">
+                <img class="nav-icon nav-icon-off" src="inicio_off.png" alt="">
+                <img class="nav-icon nav-icon-on" src="inicio_on.png" alt="">
+                <span>Inicio</span>
+            </div>
+            <div class="nav-item" data-screen="movements">
+                <img class="nav-icon nav-icon-off" src="movimientos_off.png" alt="">
+                <img class="nav-icon nav-icon-on" src="movimientos_on.png" alt="">
+                <span>Movimientos</span>
+            </div>
+            <div class="nav-item" data-screen="services">
+                <img class="nav-icon nav-icon-off" src="servicios_off.png" alt="">
+                <img class="nav-icon nav-icon-on" src="servicios_on.png" alt="">
+                <span>Servicios</span>
+            </div>
+        </nav>
+
+
+
+        <!-- Send Options Bottom Sheet -->
+        <div id="send-options-modal" class="bottom-sheet-overlay" onclick="if(event.target===this) closeSendOptions()">
+            <div class="bottom-sheet">
+                <div class="sheet-header" style="position: relative; display: block;">
+
+                    <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                        <div style="width: 40px; height: 4px; background: #D3D3D3; border-radius: 999px;"></div>
+                    </div>
+
+                    <h3 style="text-align: center; margin: 0;">
+                        Opciones para enviar
+                    </h3>
+
+                    <i data-lucide="x" class="close-sheet" onclick="closeSendOptions()"
+                        style="position: absolute; right: 0; top: 18px;">
+                    </i>
+
+                </div>
+                <div class="sheet-content">
+                    <div class="sheet-card" onclick="goToSendMoney()">
+                        <div class="card-icon"><i data-lucide="users"></i></div>
+                        <div class="card-text">
+                            <h4>Nequi</h4>
+                            <p>A otro número de Nequi</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                    </div>
+
+                    <div class="sheet-card" onclick="goToBancolombia()">
+                        <div class="card-icon"><i data-lucide="send"></i></div>
+                        <div class="card-text">
+                            <h4>Bancolombia</h4>
+                            <p>Cuenta ahorro o corriente</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                    </div>
+
+                    <div class="sheet-card" onclick="goToBreb()">
+                        <div class="card-icon"><i data-lucide="key"></i></div>
+                        <div class="card-text">
+                            <h4 style="display: flex; align-items: center; gap: 8px;">
+                                Enviar con llaves de Bre-B
+                                <span class="badge-nuevo">Nuevo</span>
+                            </h4>
+                            <p>A otros bancos gratis y de una</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                    </div>
+
+                    <div class="sheet-card" onclick="goToOtherBanks()">
+                        <div class="card-icon"><i data-lucide="wallet"></i></div>
+                        <div class="card-text">
+                            <h4>Otros bancos</h4>
+                            <p>Montos altos, puede tardar más</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Add Client Bottom Sheet -->
+        <div id="add-client-modal" class="bottom-sheet-overlay" onclick="if(event.target===this) closeAddClient()">
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <div class="sheet-header">
+                    <h3>Nuevo Cliente</h3>
+                    <i data-lucide="x" class="close-sheet" onclick="closeAddClient()"></i>
+                </div>
+                <div class="sheet-content">
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <div class="input-container floating">
+                            <input type="text" id="new-client-name" placeholder=" " style="color: #333;">
+                            <label class="floating-label">Nombre del cliente</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 30px;">
+                        <div class="input-container floating">
+                            <input type="tel" id="new-client-phone" placeholder=" " maxlength="10" style="color: #333;">
+                            <label class="floating-label">Número celular</label>
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="btn-save-client">Guardar</button>
+                </div>
+            </div>
+        </div>
+        <!-- Add Contact Bottom Sheet -->
+        <div id="add-contact-modal" class="bottom-sheet-overlay" onclick="if(event.target===this) closeAddContact()">
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <div class="sheet-header">
+                    <h3>Nuevo Contacto</h3>
+                    <i data-lucide="x" class="close-sheet" onclick="closeAddContact()"></i>
+                </div>
+                <div class="sheet-content">
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <div class="input-container floating">
+                            <input type="text" id="new-contact-name" placeholder=" " style="color: #333;">
+                            <label class="floating-label">Nombre del contacto</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 30px;">
+                        <div class="input-container floating">
+                            <input type="tel" id="new-contact-phone" placeholder=" " maxlength="10"
+                                style="color: #333;">
+                            <label class="floating-label">Número celular</label>
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="btn-save-contact">Guardar Contacto</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Phone Info Screen -->
+        <section id="screen-change-phone" class="screen"
+            style="background: var(--nequi-white); color: var(--nequi-purple-dark); padding: 40px 0 80px 0;">
+            <div style="padding: 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('login')"
+                    style="cursor: pointer; color: var(--nequi-purple-dark);"></i>
+            </div>
+
+            <div style="text-align: center; padding: 0 30px;">
+                <!-- Illustration Placeholder -->
+                <div
+                    style="width: 180px; height: 180px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                    <img src="https://img.freepik.com/free-vector/hand-drawn-female-holding-smartphone_23-2148866160.jpg?size=338&ext=jpg"
+                        alt="Illustration" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+
+                <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 20px; line-height: 1.2; text-align: left;">
+                    ¿Cómo cambio mi número de cel de Nequi?</h1>
+
+                <p style="font-size: 16px; font-weight: 500; text-align: left; margin-bottom: 20px;">Sigue los
+                    siguientes pasos</p>
+
+                <div class="steps-list" style="text-align: left;">
+                    <div class="step-item" style="padding: 15px 0; border-top: 1px solid #EEE;">
+                        <p style="font-size: 14px; color: #555; line-height: 1.4;">
+                            1. Ingresa con <strong>tu número anterior</strong> y tu clave. (Si olvidaste la clave,
+                            podrás cambiarla). Puede que necesitemos foto de tu cara y un código de seguridad.
+                        </p>
+                    </div>
+                    <div class="step-item" style="padding: 15px 0; border-top: 1px solid #EEE;">
+                        <p style="font-size: 14px; color: #555; line-height: 1.4;">
+                            2. En la app, toca <strong>Tu perfil</strong> en la parte superior izquierda.
+                        </p>
+                    </div>
+                    <div class="step-item" style="padding: 15px 0; border-top: 1px solid #EEE;">
+                        <p style="font-size: 14px; color: #555; line-height: 1.4;">
+                            3. Entra a <strong>Tu info</strong> y selecciona tu número de celular.
+                        </p>
+                    </div>
+                    <div class="step-item" style="padding: 15px 0; border-top: 1px solid #EEE;">
+                        <p style="font-size: 14px; color: #555; line-height: 1.4;">
+                            4. Para validar que eres tú, te pediremos una <strong>foto de tu cara</strong>.
+                        </p>
+                    </div>
+                    <div class="step-item" style="padding: 15px 0; border-top: 1px solid #EEE;">
+                        <p style="font-size: 14px; color: #555; line-height: 1.4;">
+                            5. Ingresa tu <strong>número nuevo</strong> y pide el código de verificación.
+                        </p>
+                    </div>
+                </div>
+
+                <button class="btn-primary" style="background: var(--nequi-magenta); margin: 30px 0;"
+                    onclick="showScreen('login')">Entrar a Nequi</button>
+            </div>
+        </section>
+
+        <!-- Pide Plata Screen -->
+        <section id="screen-pide" class="screen" style="background: var(--nequi-white); height: 100vh;">
+            <div style="padding: 60px 20px 10px 20px; flex-shrink: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <i data-lucide="arrow-left" class="btn-back" onclick="showScreen('dashboard')"
+                        style="cursor: pointer; width: 28px; height: 28px; color: var(--nequi-purple-dark);"></i>
+                </div>
+                <h1 style="font-size: 26px; font-weight: 800; color: var(--nequi-purple-dark);">Pide plata</h1>
+            </div>
+
+            <div class="content">
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <input type="tel" id="pide-phone" placeholder=" " maxlength="10" inputmode="numeric"
+                            pattern="[0-9]*" style="color: #666666;">
+                        <label class="floating-label">¿A quién vas a pedir?</label>
+                        <i data-lucide="user-plus" style="color: var(--nequi-magenta); cursor: pointer;"
+                            onclick="showToast('Contactos - Próximamente', 'info')"></i>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <input type="number" id="pide-amount" placeholder=" " style="color: #666666;">
+                        <label class="floating-label">¿Cuánto?</label>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <textarea id="pide-message" placeholder=" " rows="1"
+                            style="width: 100%; border: none; outline: none; resize: none; font-size: 16px; font-weight: 500; font-family: inherit; background: transparent; padding-top: 15px;"></textarea>
+                        <label class="floating-label">Mensaje</label>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="btn-confirm-pide" style="margin-top: 40px;"
+                    onclick="confirmPide()">Sigue</button>
+            </div>
+        </section>
+
+        <!-- Withdraw Channel Selection -->
+        <section id="screen-withdraw-channel" class="screen" style="background: var(--nequi-white);">
+            <div style="padding: 60px 20px 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('dashboard')"
+                    style="cursor: pointer; color: var(--nequi-purple-dark);"></i>
+                <h1 style="font-size: 26px; font-weight: 800; color: var(--nequi-purple-dark); margin-top: 20px;">
+                    Selecciona en donde vas a sacar plata</h1>
+                <p style="font-size: 15px; color: #666; margin-top: 5px;">Debes tener minimo $10.000 para sacar plata de
+                    tu Nequi en cualquier canal</p>
+                <div
+                    style="background: #DFF5F2; border-radius: 14px; padding: 16px 18px; margin-top: 15px; display: flex; gap: 12px; align-items: flex-start;">
+                    <i data-lucide="map-pin"
+                        style="width: 22px; height: 22px; color: #2D2D2D; flex-shrink: 0; margin-top: 2px;"></i>
+                    <p style="font-size: 15px; color: #666; margin: 0; line-height: 1.4;">
+                        Encuentra los corresponsales Nequi,
+                        Bancolombia y cajeros Bancolombia para sacar</p>
+
+                </div>
+            </div>
+            <div class="content">
+                <div class="sheet-card" onclick="selectWithdrawChannel('Corresponsal Nequi')">
+                    <div class="card-icon"><i data-lucide="home"></i></div>
+                    <div class="card-text">
+                        <h4>Corresponsal Nequi</h4>
+                        <p>Puntos de servicio cercanos</p>
+                    </div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+                <div class="sheet-card" onclick="selectWithdrawChannel('Corresponsal Bancolombia')">
+                    <div class="card-icon"><i data-lucide="building"></i></div>
+                    <div class="card-text">
+                        <h4>Corresponsal Bancolombia</h4>
+                        <p>Encuéntralos en todo el país</p>
+                    </div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+                <div class="sheet-card" onclick="selectWithdrawChannel('Cajero Bancolombia')">
+                    <div class="card-icon"><i data-lucide="monitor"></i></div>
+                    <div class="card-text">
+                        <h4>Cajero Bancolombia</h4>
+                        <p>Retira sin tarjeta en cajeros</p>
+                    </div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Withdraw Source Selection -->
+        <section id="screen-withdraw-source" class="screen" style="background: var(--nequi-white);">
+            <div style="padding: 60px 20px 10px 20px;">
+                <i data-lucide="arrow-left" onclick="showScreen('withdraw-channel')"
+                    style="cursor: pointer; color: var(--nequi-purple-dark); margin-bottom: 20px; display: inline-block;"></i>
+                <h1 style="font-size: 24px; font-weight: 800; color: var(--nequi-purple-dark);">Escoge de dónde saldrá
+                    tu plata</h1>
+            </div>
+            <div class="content">
+                <div class="promo-card" onclick="confirmWithdraw()"
+                    style="cursor: pointer; border: 1px solid var(--nequi-magenta); background: #FFF9FC;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 40px; height: 40px; background: var(--nequi-magenta); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i data-lucide="layout-grid" style="width: 20px;"></i>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 16px; color: var(--nequi-purple-dark); font-weight: 700;">Disponible
+                            </h4>
+                            <p style="font-size: 13px; color: #888; margin: 0;" id="withdraw-available-balance">$ 0,00
+                            </p>
+                        </div>
+                    </div>
+                    <div
+                        style="background: var(--nequi-magenta); color: white; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 800;">
+                        SACAR PLATA</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Withdraw Code Screen -->
+        <section id="screen-withdraw-code" class="screen" style="background: var(--nequi-purple-dark); color: white;">
+            <div style="padding: 60px 20px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <i data-lucide="x" onclick="showScreen('dashboard')" style="cursor: pointer;"></i>
+                <span style="font-weight: 700; font-size: 14px;">?</span>
+            </div>
+
+            <div style="text-align: center; padding: 20px 30px;">
+                <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 10px;">Tu código</h1>
+                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 40px;">Díselo al Corresponsal o escríbelo en el
+                    Cajero para sacar la plata.</p>
+
+                <div class="withdraw-code-container">
+                    <div id="withdraw-code-display" class="withdraw-code-hidden">••••••</div>
+                    <div id="btn-toggle-withdraw-code" class="withdraw-code-eye">
+                        <i data-lucide="eye-off"></i>
+                    </div>
+                </div>
+
+                <div class="withdraw-timer-container">
+                    <div class="withdraw-timer-circle">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4">
+                            </circle>
+                            <circle id="withdraw-timer-progress" cx="60" cy="60" r="54" fill="none"
+                                stroke="var(--nequi-magenta)" stroke-width="4" stroke-dasharray="339.29"
+                                stroke-dashoffset="0" style="transition: stroke-dashoffset 1s linear;"></circle>
+                        </svg>
+                        <div class="withdraw-timer-text">
+                            <span id="withdraw-timer-countdown">30:00</span>
+                            <span
+                                style="font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: 800;">minutos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="withdraw-expired-msg"
+                    style="display: none; color: #FF5252; font-weight: 800; margin-top: 20px;">CÓDIGO VENCIDO</div>
+
+                <div style="margin-top: 50px;">
+                    <div
+                        style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; text-align: left; display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(218, 0, 129, 0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--nequi-magenta);">
+                            <i data-lucide="info"></i>
+                        </div>
+                        <p style="font-size: 13px; line-height: 1.4; opacity: 0.9;">Por tu seguridad, no compartas este
+                            código con otras personas</p>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="showScreen('dashboard')"
+                    style="margin-top: 40px; background: rgba(255,255,255,0.1); box-shadow: none; border: 1px solid rgba(255,255,255,0.2);">Listo</button>
+            </div>
+        </section>
+
+        <!-- Admin Login Screen -->
+        <section id="screen-admin-login" class="screen"
+            style="background: var(--nequi-purple-dark); color: white; justify-content: center; align-items: center; padding: 30px;">
+            <i data-lucide="shield-check"
+                style="width: 60px; height: 60px; color: var(--nequi-magenta); margin-bottom: 20px;"></i>
+            <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 10px; text-align: center;">Acceso
+                Administrativo</h1>
+            <p style="font-size: 14px; opacity: 0.8; text-align: center; margin-bottom: 40px;">Por favor, autentícate
+                para configurar la aplicación por primera vez.</p>
+
+            <div class="form-group" style="width: 100%; margin-bottom: 20px;">
+                <div class="input-container floating"
+                    style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                    <input type="tel" id="admin-phone" placeholder=" " maxlength="12" inputmode="numeric"
+                        autocomplete="tel" style="color: white;">
+                    <label class="floating-label" style="color: rgba(255,255,255,0.6);">Celular</label>
+                </div>
+            </div>
+            <div class="form-group" style="width: 100%; margin-bottom: 30px;">
+                <div class="input-container floating"
+                    style="position:relative; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                    <input type="password" id="admin-password" placeholder=" " style="color: white; padding-right: 40px;">
+                    <label class="floating-label" style="color: rgba(255,255,255,0.6);">Contraseña</label>
+                    <i data-lucide="eye" id="toggle-admin-password" onclick="togglePasswordVisibility('admin-password','toggle-admin-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:rgba(255,255,255,0.6);width:18px;"></i>
+                </div>
+                <div style="text-align:right;margin-top:8px;">
+                    <span onclick="showForgotAdminPassword()"
+                        style="font-size:13px;color:rgba(255,255,255,0.7);cursor:pointer;text-decoration:underline;">¿Olvidaste tu contraseña?</span>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="btn-admin-login" style="width: 100%;">Iniciar Sesión</button>
+            <button type="button" id="btn-admin-register" class="admin-secondary-btn">Crear cuenta</button>
+
+            <!-- WhatsApp Info Admin -->
+            <div
+                style="margin-top: 30px; font-size: 11px; opacity: 0.6; display: flex; align-items: center; justify-content: center; gap: 5px; color: white;">
+                <i data-lucide="message-circle" style="width: 12px; height: 12px;"></i>
+                <span>¿Olvidaste tu clave? WhatsApp 3214484092</span>
+            </div>
+        </section>
+
+        <!-- Blocked Screen -->
+        <section id="screen-blocked" class="screen"
+            style="background: #1A001A; color: white; justify-content: center; align-items: center; padding: 40px; z-index: 9999;">
+            <i data-lucide="lock" style="width: 80px; height: 80px; margin-bottom: 20px; opacity: 0.9;"></i>
+            <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 15px; text-align: center;">Acceso Bloqueado
+            </h1>
+            <p style="font-size: 16px; opacity: 0.9; text-align: center; margin-bottom: 40px; line-height: 1.5;">Se ha
+                superado el límite de uso o tu cuenta ha sido suspendida temporalmente.</p>
+
+            <div
+                style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 40px; width: 100%;">
+                <p style="font-size: 14px; margin-bottom: 10px; font-weight: 600;">Para solicitar el desbloqueo
+                    comunícate al WhatsApp:</p>
+                <div
+                    style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 24px; font-weight: 800;">
+                    <i data-lucide="phone" style="width: 24px; height: 24px;"></i>
+                    3214484092
+                </div>
+            </div>
+
+            <button class="btn-primary" style="background: #DA0081; border: 1px solid #ff33A1; box-shadow: none;"
+                onclick="if(navigator.app){navigator.app.exitApp();}else{window.close();}">Salir de la
+                aplicación</button>
+        </section>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="success-toast" class="success-toast"></div>
+
+    <!-- Styled Toast (replaces alert()) -->
+    <div id="toast-message" class="toast-message"></div>
+
+    <!-- Premium Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="dance-container">
+            <div class="dot dot-1"></div>
+            <div class="dot dot-2"></div>
+        </div>
+    </div>
+
+    <!-- Error Message Overlay -->
+    <div id="error-overlay" class="error-message-overlay">
+        <div class="error-card">
+            <h3>¡Ups! Algo salió mal</h3>
+            <p>No se pudo cargar, revisa tu conexión a internet.</p>
+            <button class="btn-retry"
+                onclick="document.getElementById('error-overlay').classList.remove('active')">Entendido</button>
+        </div>
+    </div>
+
+    <!-- Exit Confirmation Overlay -->
+    <div id="exit-confirm-overlay" class="exit-confirm-overlay">
+        <div class="exit-confirm-card">
+            <h3>¿Estas seguro que quieres salir de Nequi?</h3>
+            <p>Es mejor que cierres tu sesión cuando no estés usando Nequi</p>
+            <div class="exit-confirm-actions">
+                <button type="button" class="exit-cancel-btn" id="btn-exit-cancel">Cancelar</button>
+                <button type="button" class="exit-accept-btn" id="btn-exit-accept">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Options Bottom Sheet -->
+    <div id="send-options-modal" class="bottom-sheet-overlay" onclick="if(event.target===this) closeSendOptions()">
+        <div class="bottom-sheet">
+            <div class="sheet-header" style="position: relative; display: block;">
+
+                <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                    <div style="width: 40px; height: 4px; background: #D3D3D3; border-radius: 999px;"></div>
+                </div>
+
+                <h3 style="text-align: center; margin: 0;">
+                    Opciones para enviar
+                </h3>
+
+                <i data-lucide="x" class="close-sheet" onclick="closeSendOptions()"
+                    style="position: absolute; right: 0; top: 18px;">
+                </i>
+
+            </div>
+            <div class="sheet-content">
+                <div class="sheet-card" onclick="goToSendMoney()">
+                    <div class="card-icon"><i data-lucide="users"></i></div>
+                    <div class="card-text">
+                        <h4>Nequi</h4>
+                        <p>A otro número de Nequi</p>
+                    </div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+
+                <div class="sheet-card" onclick="goToBancolombia()">
+                    <div class="card-icon"><i data-lucide="send"></i></div>
+                    <div class="card-text">
+                        <h4>Bancolombia</h4>
+                        <p>Cuenta ahorro o corriente</p>
+                    </div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+
+                <div class="sheet-card" onclick="goToBreb()">
+                    <div class="card-icon"><i data-lucide="key"></i></div>
+                    <div class="card-text">
+                        <h4>Transfiya</h4>
+                        <p>A otros bancos con el cel</p>
+                    </div>
+                    <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="bottom-sheet-overlay" onclick="if(event.target===this) closeEditProfile()">
+        <div class="bottom-sheet">
+            <div class="sheet-header" style="position: relative; display: block;">
+                <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                    <div style="width: 40px; height: 4px; background: #D3D3D3; border-radius: 999px;"></div>
+                </div>
+                <h3 style="text-align: center; margin: 0;">Editar perfil</h3>
+                <i data-lucide="x" class="close-sheet" onclick="closeEditProfile()"
+                    style="position: absolute; right: 0; top: 18px;"></i>
+            </div>
+            <div class="sheet-content">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="text" id="edit-name" placeholder=" " style="color: #333;">
+                        <label class="floating-label">Nombre</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <input type="tel" id="edit-phone" placeholder=" " maxlength="10" style="color: #333;">
+                        <label class="floating-label">Celular</label>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="saveProfile()">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Colchón Modal -->
+    <div id="colchon-modal" class="bottom-sheet-overlay" onclick="if(event.target===this) closeColchonModal()">
+        <div class="bottom-sheet">
+            <div class="sheet-header" style="position: relative; display: block;">
+                <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                    <div style="width: 40px; height: 4px; background: #D3D3D3; border-radius: 999px;"></div>
+                </div>
+                <h3 id="colchon-modal-title" style="text-align: center; margin: 0;">Meter plata al Colchón</h3>
+                <i data-lucide="x" class="close-sheet" onclick="closeColchonModal()"
+                    style="position: absolute; right: 0; top: 18px;"></i>
+            </div>
+            <div class="sheet-content">
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <input type="number" id="colchon-amount" placeholder=" " style="color: #333;">
+                        <label class="floating-label">¿Cuánto?</label>
+                    </div>
+                </div>
+                <button class="btn-primary" id="colchon-modal-btn" onclick="confirmColchonAdd()">Meter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="bottom-sheet-overlay" onclick="if(event.target===this) closeQRCode()">
+        <div class="bottom-sheet">
+            <div class="sheet-header" style="position: relative; display: block;">
+                <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                    <div style="width: 40px; height: 4px; background: #D3D3D3; border-radius: 999px;"></div>
+                </div>
+                <h3 style="text-align: center; margin: 0;">Tu código QR</h3>
+                <i data-lucide="x" class="close-sheet" onclick="closeQRCode()"
+                    style="position: absolute; right: 0; top: 18px;"></i>
+            </div>
+            <div class="sheet-content" style="text-align: center; padding: 20px 0;">
+                <div id="qr-code-display"
+                    style="width: 200px; height: 200px; margin: 0 auto; background: white; border: 2px solid #F0F0F0; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                </div>
+                <p style="font-size: 14px; color: #888; margin-top: 20px; font-weight: 500;">Escanea este código con
+                    otro Nequi para recibir plata</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Pocket Modal -->
+    <div id="create-pocket-modal" class="bottom-sheet-overlay"
+        onclick="if(event.target===this) closeCreatePocket()">
+        <div class="bottom-sheet">
+            <div class="sheet-header" style="position: relative; display: block;">
+                <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                    <div style="width: 40px; height: 4px; background: #D3D3D3; border-radius: 999px;"></div>
+                </div>
+                <h3 style="text-align: center; margin: 0;">Crear Bolsillo</h3>
+                <i data-lucide="x" class="close-sheet" onclick="closeCreatePocket()"
+                    style="position: absolute; right: 0; top: 18px;"></i>
+            </div>
+            <div class="sheet-content">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <div class="input-container floating">
+                        <input type="text" id="pocket-name" placeholder=" " style="color: #333;">
+                        <label class="floating-label">Nombre del Bolsillo</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <div class="input-container floating">
+                        <input type="number" id="pocket-amount" placeholder=" " style="color: #333;">
+                        <label class="floating-label">¿Cuánto quieres ahorrar?</label>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="savePocket()">Crear Bolsillo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recovery Modal -->
+    <div id="recovery-modal" class="bottom-sheet-overlay" onclick="if(event.target===this) closeRecoveryModal()">
+        <div class="bottom-sheet">
+            <div class="sheet-header" style="position:relative;display:block;">
+                <div style="display:flex;justify-content:center;margin-bottom:12px;">
+                    <div style="width:40px;height:4px;background:#D3D3D3;border-radius:999px;"></div>
+                </div>
+                <h3 style="text-align:center;margin:0;">Recuperar contraseña</h3>
+                <i data-lucide="x" class="close-sheet" onclick="closeRecoveryModal()" style="position:absolute;right:0;top:18px;"></i>
+            </div>
+            <div class="sheet-content" style="text-align:center;">
+                <i data-lucide="lock" style="width:48px;height:48px;color:var(--nequi-magenta);margin-bottom:16px;"></i>
+                <p style="font-size:15px;color:#555;line-height:1.5;margin-bottom:20px;">
+                    Para restablecer tu contraseña, escríbenos al WhatsApp y te ayudaremos.
+                </p>
+                <div style="background:#F0F8FF;border-radius:10px;padding:16px;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;">
+                    <i data-lucide="message-circle" style="color:#25D366;width:22px;"></i>
+                    <span style="font-size:18px;font-weight:800;color:var(--nequi-purple-dark);">3214484092</span>
+                </div>
+                <button class="btn-primary" onclick="window.open('https://wa.me/573214484092','_blank')" style="margin-top:0;">Chatear por WhatsApp</button>
+                <button class="btn-outline-dark" onclick="closeRecoveryModal()" style="margin-top:10px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="change-password-modal" class="bottom-sheet-overlay" onclick="if(event.target===this) closeChangePassword()">
+        <div class="bottom-sheet">
+            <div class="sheet-header" style="position:relative;display:block;">
+                <div style="display:flex;justify-content:center;margin-bottom:12px;">
+                    <div style="width:40px;height:4px;background:#D3D3D3;border-radius:999px;"></div>
+                </div>
+                <h3 style="text-align:center;margin:0;">Cambiar contraseña</h3>
+                <i data-lucide="x" class="close-sheet" onclick="closeChangePassword()" style="position:absolute;right:0;top:18px;"></i>
+            </div>
+            <div class="sheet-content">
+                <p style="font-size:14px;color:#666;margin-bottom:20px;">Ingresa tu nueva contraseña de mínimo 6 caracteres.</p>
+                <div class="form-group" style="margin-bottom:25px;">
+                    <div class="input-container floating" style="position:relative;">
+                        <input type="password" id="new-password" placeholder=" " style="color:#333; padding-right: 40px;">
+                        <label class="floating-label">Nueva contraseña</label>
+                        <i data-lucide="eye" id="toggle-new-password" onclick="togglePasswordVisibility('new-password','toggle-new-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#888;width:18px;"></i>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="saveNewPassword()" style="margin-top:0;">Guardar</button>
+                <button class="btn-outline-dark" onclick="closeChangePassword()" style="margin-top:10px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Menu Overlay -->
+    <div id="fab-overlay">
+        <div class="menu-items">
+            <div class="menu-item" onclick="document.getElementById('fab-overlay').classList.remove('active');document.getElementById('btn-open-fab').classList.remove('fab-active');showScreen('services')">
+                <span class="menu-label">+ Servicios</span>
+                <div class="menu-icon blue"><i data-lucide="layout-grid"></i></div>
+            </div>
+            <div class="menu-item" onclick="startWithdraw()">
+                <span class="menu-label">Saca</span>
+                <div class="menu-icon"><i data-lucide="arrow-down"></i></div>
+            </div>
+            <div class="menu-item" onclick="showPide()">
+                <span class="menu-label">Pide</span>
+                <div class="menu-icon"><i data-lucide="arrow-left"></i></div>
+            </div>
+            <div class="menu-item" onclick="showSendOptions()">
+                <span class="menu-label">Envía</span>
+                <div class="menu-icon"><i data-lucide="arrow-right"></i></div>
+            </div>
+            <div class="menu-item" onclick="showQRCode()">
+                <span class="menu-label">Código QR</span>
+                <div class="menu-icon"><i data-lucide="qr-code"></i></div>
+            </div>
+            <div class="menu-item" onclick="goToSelfRecharge()">
+                <span class="menu-label">Recarga Nequi</span>
+                <div class="menu-icon"><i data-lucide="arrow-up"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global FAB Layer (Isolated & Centered) -->
+    <div class="fab-global-layer">
+
+
+        <div class="fab" id="btn-open-fab">
+            <i data-lucide="dollar-sign" class="fab-icon-main"></i>
+            <i data-lucide="x" class="fab-icon-close"></i>
+        </div>
+    </div>
+
+    <script src="db.js?v=20260507-1740"></script>
+    <script src="app.js?v=20260508-phone-auth"></script>
+    <script>
+        // Force unregister of any old Service Workers causing duplicate phantom FABs
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
