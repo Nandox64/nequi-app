@@ -18,9 +18,9 @@ Proyecto relacionado con Nequi Colombia que incluye:
 ```
 
 ## Próximos pasos / Tareas
-<!-- Actualiza esta sección a medida que avancemos -->
 
-- [ ] Pendiente — define los pasos de tu plan aquí
+- [x] Crear script `reset-password.js` con prompt interactivo para cambiar contraseña en Firebase Auth
+- [x] Botón compartir en voucher: capturar `.receipt-card` como imagen PNG con html2canvas y compartir vía Web Share API nativa
 
 ## Notas
 - `Codigos.txt` está vacío — usar para lo que necesites

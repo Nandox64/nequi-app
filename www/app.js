@@ -1263,43 +1263,77 @@ function showReceipt(amount, name, phone, message, type = 'send') {
     }
 }
 
-// Funcionalidad de Compartir Voucher (Ventana Nativa en Móvil / Portapapeles en PC)
+// Funcionalidad de Compartir Voucher (Captura de imagen + Share Nativo)
 document.addEventListener('click', (e) => {
     const btn = e.target.closest('#btn-share-receipt');
     if (btn) {
         e.preventDefault();
         e.stopPropagation();
 
-        const name = document.getElementById('receipt-name').innerText;
-        const amount = document.getElementById('receipt-amount').innerText;
-        const date = document.getElementById('receipt-date').innerText;
-        const ref = document.getElementById('receipt-ref').innerText;
-        
-        // Incluir mensaje solo si es válido y visible
-        const msgEl = document.getElementById('receipt-message');
-        const msgRow = msgEl ? msgEl.parentElement : null;
-        let msgPart = "";
-        if (msgRow && msgRow.style.display !== 'none') {
-            const txt = msgEl.innerText.trim();
-            if (txt && txt.toLowerCase() !== 'sin mensaje' && txt.toLowerCase() !== 'nada') {
-                msgPart = `\n💬 Mensaje: ${txt}`;
-            }
-        }
-        
-        const shareText = `💸 Nequi: Envío Exitoso\n✅ Para: ${name}\n💰 Monto: ${amount}\n📅 Fecha: ${date}\n🆔 Ref: ${ref}${msgPart}`;
+        const receiptCard = document.querySelector('.receipt-card');
+        if (!receiptCard) return;
 
-        if (navigator.share) {
-            // PRIORIDAD: Abrir ventana nativa del sistema operativo
-            navigator.share({
-                title: 'Comprobante Nequi',
-                text: shareText
-            }).catch(() => {});
-        } else {
-            // FALLBACK: Copiar al portapapeles en navegadores sin Share API
-            navigator.clipboard.writeText(shareText).then(() => {
-                showToast('¡Comprobante copiado al portapapeles!', 'success');
+        showToast('Generando imagen del voucher...', 'info');
+
+        html2canvas(receiptCard, {
+            scale: 3,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#FFFFFF',
+            logging: false,
+        }).then((canvas) => {
+            return new Promise((resolve, reject) => {
+                canvas.toBlob((blob) => {
+                    if (blob) resolve(blob);
+                    else reject(new Error('toBlob falló'));
+                }, 'image/png');
             });
-        }
+        }).then((blob) => {
+            const file = new File([blob], 'voucher-nequi.png', { type: 'image/png' });
+
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    title: 'Comprobante Nequi',
+                    text: 'Aquí está mi comprobante de Nequi',
+                    files: [file],
+                }).catch(() => {});
+            } else if (navigator.share) {
+                navigator.share({
+                    title: 'Comprobante Nequi',
+                    text: 'Aquí está mi comprobante de Nequi',
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': blob })
+                ]).then(() => {
+                    showToast('¡Imagen del voucher copiada al portapapeles!', 'success');
+                }).catch(() => {
+                    // Fallback texto
+                    const name = document.getElementById('receipt-name').innerText;
+                    const amount = document.getElementById('receipt-amount').innerText;
+                    const date = document.getElementById('receipt-date').innerText;
+                    const ref = document.getElementById('receipt-ref').innerText;
+                    const shareText = `💸 Nequi: Envío Exitoso\n✅ Para: ${name}\n💰 Monto: ${amount}\n📅 Fecha: ${date}\n🆔 Ref: ${ref}`;
+                    navigator.clipboard.writeText(shareText).then(() => {
+                        showToast('¡Comprobante copiado al portapapeles!', 'success');
+                    });
+                });
+            }
+        }).catch(() => {
+            // Fallback si html2canvas falla
+            const name = document.getElementById('receipt-name').innerText;
+            const amount = document.getElementById('receipt-amount').innerText;
+            const date = document.getElementById('receipt-date').innerText;
+            const ref = document.getElementById('receipt-ref').innerText;
+            const shareText = `💸 Nequi: Envío Exitoso\n✅ Para: ${name}\n💰 Monto: ${amount}\n📅 Fecha: ${date}\n🆔 Ref: ${ref}`;
+            if (navigator.share) {
+                navigator.share({ title: 'Comprobante Nequi', text: shareText }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showToast('¡Comprobante copiado al portapapeles!', 'success');
+                });
+            }
+        });
     }
 });
 
