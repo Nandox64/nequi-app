@@ -7,7 +7,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item> 
-        <item name="android:statusBarColor">#F4F4F4</item> 
+        <item name="android:statusBarColor">#200020</item> 
         <item name="android:windowLightStatusBar">false</item>
 
         
