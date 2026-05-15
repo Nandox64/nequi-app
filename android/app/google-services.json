@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "14367352191",
+    "project_id": "nequi-col",
+    "storage_bucket": "nequi-col.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14367352191:android:a76411a6e83895e23be64a",
+        "android_client_info": {
+          "package_name": "com.nivel24.nequi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1G3NRhRkKhk3ysIuiSb_-JRlFEPBrgsQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
