@@ -36,6 +36,11 @@
             </div>
         </div>
 
+        <!-- Full-screen banner before login -->
+        <div id="banner-inicio" class="banner-inicio banner-inicio-hidden" onclick="closeBannerInicio()">
+            <div class="banner-inicio-label">Toca para continuar</div>
+        </div>
+
         <!-- Login Screen (Dark) -->
         <section id="screen-login" class="screen active login-screen-style">
 
@@ -461,9 +466,9 @@
                         Escoge de donde saldrá la plata</p>
                     <div class="promo-card" id="btn-select-source" style="margin-bottom: 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 15px;">
-                            <img src="img/img_disponible.png" alt="Disponible" style="width: 40px; height: 40px; border-radius: 6px;">
+                            <img src="img/img_disponible.png" alt="Disponible" style="width: 48px; height: 48px; border-radius: 6px;">
                             <div>
-                                <h4 style="font-size: 16px; color: white;">Disponible</h4>
+                                <h4 style="font-size: 16px; color: var(--nequi-purple-dark);">Disponible</h4>
                             </div>
                         </div>
                          <i data-lucide="chevron-right" style="color: var(--nequi-text-gray); width: 20px;"></i>
@@ -530,10 +535,7 @@
                 <p style="font-weight: 700; color: var(--nequi-purple-dark); margin-bottom: 5px;">¿De dónde saldrá la
                     plata?</p>
                 <div class="source-box">
-                    <div
-                        style="width: 40px; height: 40px; background: var(--nequi-magenta); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
-                        <i data-lucide="layout-grid" style="width: 20px;"></i>
-                    </div>
+                    <img src="img/img_disponible.png" alt="Disponible" style="width: 48px; height: 48px; border-radius: 6px;">
                     <span style="font-weight: 600; color: var(--nequi-purple-dark);">Disponible</span>
                 </div>
 

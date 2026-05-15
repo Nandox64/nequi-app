@@ -1298,7 +1298,10 @@ async function initApp() {
     setTimeout(() => {
         if (splash) {
             splash.style.opacity = '0';
-            setTimeout(() => { splash.style.display = 'none'; }, 600);
+            setTimeout(() => {
+                splash.style.display = 'none';
+                showBannerInicio();
+            }, 600);
         }
     }, 4000);
 
@@ -2350,6 +2353,16 @@ inputAmount.addEventListener('input', () => {
         showFieldError('msg-amount', '!Ups! Debes llenar esto');
     }
 });
+
+function toggleSendButton() {
+    const phoneOk = (document.getElementById('input-phone').value || '').replace(/\D/g,'').length >= 10;
+    const amountOk = parseFloat(document.getElementById('input-amount').value) > 0;
+    btnConfirmSend.disabled = !(phoneOk && amountOk);
+}
+
+document.getElementById('input-phone').addEventListener('input', toggleSendButton);
+document.getElementById('input-amount').addEventListener('input', toggleSendButton);
+setTimeout(toggleSendButton, 100);
 
 const btnConfirmSend = document.getElementById('btn-confirm-send');
 btnConfirmSend.addEventListener('click', () => {
@@ -4384,6 +4397,16 @@ function removeFavorite(id) {
     showEditFavorites();
 }
 
+function showBannerInicio() {
+    const el = document.getElementById('banner-inicio');
+    if (el) el.classList.remove('banner-inicio-hidden');
+}
+function closeBannerInicio() {
+    const el = document.getElementById('banner-inicio');
+    if (el) el.classList.add('banner-inicio-hidden');
+}
+
+window.closeBannerInicio = closeBannerInicio;
 window.showToast = showToast;
 window.showComingSoon = showComingSoon;
 window.showQRCode = showQRCode;

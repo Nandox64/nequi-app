@@ -2148,6 +2148,38 @@ body.hide-nav #btn-open-fab {
 }
 
 /* Splash Screen Styles */
+/* Full-screen banner before login */
+.banner-inicio {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000 url('img/banner_inicio.jpeg') no-repeat center center;
+    background-size: cover;
+    z-index: 15000;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    transition: opacity 0.5s ease-out;
+}
+.banner-inicio-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.banner-inicio-label {
+    margin-bottom: 60px;
+    color: rgba(255,255,255,0.5);
+    font-size: 14px;
+    font-weight: 600;
+    animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
 .splash-screen {
     position: fixed;
     top: 0;
