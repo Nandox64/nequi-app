@@ -5,11 +5,11 @@
 const DEBUG_MODE = false;
 
 // Global error capture for on-device debugging
-window.onerror = function(msg, url, line) {
+window.onerror = function (msg, url, line) {
     const el = document.getElementById('debug-msg');
     if (el) { el.innerText = msg + ' (line ' + line + ')'; el.style.display = 'block'; }
 };
-window.addEventListener('unhandledrejection', function(e) {
+window.addEventListener('unhandledrejection', function (e) {
     const el = document.getElementById('debug-msg');
     if (el) { el.innerText = 'Promise: ' + (e.reason?.message || e.reason || '?'); el.style.display = 'block'; }
 });
@@ -274,8 +274,8 @@ async function setupCapacitorPush(phone) {
             }
             if (document.getElementById('screen-notifications')?.classList.contains('active')) {
                 renderNotifications();
-        }
-    });
+            }
+        });
     } catch (e) {
         if (DEBUG_MODE) console.warn('Capacitor push setup error:', e);
     }
@@ -339,7 +339,7 @@ async function removeFCMToken(phone) {
         }
 
         if (typeof Capacitor !== 'undefined' && Capacitor.isNativePlatform()) {
-            try { await Capacitor.Plugins.PushNotifications.unregister(); } catch (e) {}
+            try { await Capacitor.Plugins.PushNotifications.unregister(); } catch (e) { }
         }
     } catch (e) {
         if (DEBUG_MODE) console.warn('Error removing FCM token:', e);
@@ -381,7 +381,7 @@ async function recordAccessHistory(phoneNumber, eventType, user, deviceIdOverrid
                 deviceName = dev.name || '';
                 isBlocked = dev.is_blocked;
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 
     try {
@@ -629,12 +629,12 @@ async function ensureUserAccessDoc(phoneNumber, user, eventType, authEmail) {
 
 // --- FIREBASE CONFIGURATION ---
 const firebaseConfig = {
-  apiKey: "AIzaSyCeP4cdfmm2fNroihv18oVBFevScIrfAZ0",
-  authDomain: "nequi-col.firebaseapp.com",
-  projectId: "nequi-col",
-  storageBucket: "nequi-col.firebasestorage.app",
-  messagingSenderId: "14367352191",
-  appId: "1:14367352191:web:3e695db9beec64353be64a"
+    apiKey: "AIzaSyCeP4cdfmm2fNroihv18oVBFevScIrfAZ0",
+    authDomain: "nequi-col.firebaseapp.com",
+    projectId: "nequi-col",
+    storageBucket: "nequi-col.firebasestorage.app",
+    messagingSenderId: "14367352191",
+    appId: "1:14367352191:web:3e695db9beec64353be64a"
 };
 
 // Initialize Firebase
@@ -653,7 +653,7 @@ try {
             });
         }
     }
-} catch(e) {
+} catch (e) {
     if (DEBUG_MODE) console.warn("Firebase no está configurado aún o hubo un error:", e);
 }
 
@@ -954,7 +954,7 @@ async function completeAdminSetup(phone) {
                 lastLoginAt: getServerTimestamp(),
                 updatedAt: getServerTimestamp()
             }, { merge: true });
-        } catch (e) {}
+        } catch (e) { }
     }
 
     await loadDB(tempPhone);
@@ -1096,7 +1096,7 @@ document.addEventListener('click', async (e) => {
                             deviceConflict = true;
                         }
                     }
-                } catch (e) {}
+                } catch (e) { }
             }
             if (deviceConflict) {
                 showToast('Este número ya está registrado en otro dispositivo.');
@@ -1143,7 +1143,7 @@ document.addEventListener('click', async (e) => {
     updateAdminPinDots();
 
     if (adminEnteredPin.length === 4) {
-        setTimeout(() => handleAdminPinEntry().catch(() => {}), 120);
+        setTimeout(() => handleAdminPinEntry().catch(() => { }), 120);
     }
 });
 
@@ -1292,129 +1292,129 @@ async function checkAppVersion() {
 
 async function initApp() {
     try {
-    const splash = document.getElementById('splash-screen');
-    
-    // Garantizar que el splash desaparezca incluso si algo falla
-    setTimeout(() => {
-        if (splash) {
-            splash.style.opacity = '0';
-            setTimeout(() => {
-                splash.style.display = 'none';
-                showBannerInicio();
-            }, 600);
-        }
-    }, 4000);
+        const splash = document.getElementById('splash-screen');
 
-    try {
-        await loadDB();
-
-        const versionCheck = await checkAppVersion();
-        if (versionCheck.needsUpdate) {
-            if (splash) { splash.style.display = 'none'; }
-            showUpdateScreen(versionCheck.updateUrl);
-            return;
-        }
-    } catch (e) {
-        if (DEBUG_MODE) console.warn('Error en initApp, continuando de todos modos:', e);
-    }
-
-    // Initial history state
-    await checkAccessControl();
-
-    // Update UI with data
-    updateUserData();
-    
-    // Simulate "Services" loading with skeleton effect
-    setTimeout(() => {
-        renderServices();
-    }, 2000);
-
-    // Initialize Dynamic Code
-    updateDynamicCode();
-    setInterval(updateDynamicCode, 40000);
-
-    // Login Button Logic
-    const btnEnter = document.getElementById('btn-login-enter');
-    if (btnEnter) {
-        btnEnter.addEventListener('click', () => {
-            const originalText = btnEnter.innerText;
-            btnEnter.innerHTML = '<div class="spinner"></div>';
-            setTimeout(() => {
-                btnEnter.innerText = originalText;
-                showScreen('pin');
-            }, 5000);
-        });
-    }
-
-    // Dashboard Header Interactions
-    const btnNotifications = document.getElementById('btn-notifications');
-    if (btnNotifications) {
-        btnNotifications.addEventListener('click', () => {
-            showScreen('notifications');
-        });
-    }
-
-    const btnSelectSource = document.getElementById('btn-select-source');
-    if (btnSelectSource) {
-        btnSelectSource.addEventListener('click', () => {
-            showScreen('available-detail');
-        });
-    }
-
-    const btnProfile = document.getElementById('btn-profile');
-    if (btnProfile) {
-        btnProfile.addEventListener('click', () => {
-            renderPerfil();
-            showScreen('perfil');
-        });
-    }
-
-    // Header Accordion Toggle
-    const btnToggleAccordion = document.getElementById('btn-toggle-accordion');
-    const balanceAccordion = document.getElementById('balance-accordion');
-    const accordionIcon = document.getElementById('accordion-icon');
-
-    if (btnToggleAccordion && balanceAccordion && accordionIcon) {
-        btnToggleAccordion.addEventListener('click', () => {
-            const isVisible = balanceAccordion.style.display === 'block';
-            balanceAccordion.style.display = isVisible ? 'none' : 'block';
-            accordionIcon.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
-        });
-    }
-
-    // Balance Visibility Toggle
-    const btnToggleVisibility = document.getElementById('btn-toggle-visibility');
-    if (btnToggleVisibility) {
-        btnToggleVisibility.addEventListener('click', () => {
-            isBalanceVisible = !isBalanceVisible;
-            updateUserData(); // Refresh with mask or value
-            
-            // Re-render Icon inside the wrapper
-            const iconName = isBalanceVisible ? 'eye-off' : 'eye';
-            btnToggleVisibility.innerHTML = `<i data-lucide="${iconName}" style="width: 16px;"></i>`;
-            lucide.createIcons();
-        });
-    }
-
-    enableDragScroll('.dashboard-grid');
-    enableDragScroll('.banner-slider');
-
-    // Re-verificar estado al volver de segundo plano (Android suspende los listeners)
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            const phone = getStoredAdminPhone();
-            if (phone && isValidColombianMobile(phone)) {
-                if (accessStatusUnsubscribe && typeof accessStatusUnsubscribe === 'function') {
-                    accessStatusUnsubscribe();
-                }
-                accessStatusUnsubscribe = null;
-                verifyStatusSilently(phone);
+        // Garantizar que el splash desaparezca incluso si algo falla
+        setTimeout(() => {
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    showBannerInicio();
+                }, 600);
             }
+        }, 2200);
+
+        try {
+            await loadDB();
+
+            const versionCheck = await checkAppVersion();
+            if (versionCheck.needsUpdate) {
+                if (splash) { splash.style.display = 'none'; }
+                showUpdateScreen(versionCheck.updateUrl);
+                return;
+            }
+        } catch (e) {
+            if (DEBUG_MODE) console.warn('Error en initApp, continuando de todos modos:', e);
         }
-    });
-    } catch(e) {
+
+        // Initial history state
+        await checkAccessControl();
+
+        // Update UI with data
+        updateUserData();
+
+        // Simulate "Services" loading with skeleton effect
+        setTimeout(() => {
+            renderServices();
+        }, 2000);
+
+        // Initialize Dynamic Code
+        updateDynamicCode();
+        setInterval(updateDynamicCode, 40000);
+
+        // Login Button Logic
+        const btnEnter = document.getElementById('btn-login-enter');
+        if (btnEnter) {
+            btnEnter.addEventListener('click', () => {
+                const originalText = btnEnter.innerText;
+                btnEnter.innerHTML = '<div class="spinner"></div>';
+                setTimeout(() => {
+                    btnEnter.innerText = originalText;
+                    showScreen('pin');
+                }, 5000);
+            });
+        }
+
+        // Dashboard Header Interactions
+        const btnNotifications = document.getElementById('btn-notifications');
+        if (btnNotifications) {
+            btnNotifications.addEventListener('click', () => {
+                showScreen('notifications');
+            });
+        }
+
+        const btnSelectSource = document.getElementById('btn-select-source');
+        if (btnSelectSource) {
+            btnSelectSource.addEventListener('click', () => {
+                showScreen('available-detail');
+            });
+        }
+
+        const btnProfile = document.getElementById('btn-profile');
+        if (btnProfile) {
+            btnProfile.addEventListener('click', () => {
+                renderPerfil();
+                showScreen('perfil');
+            });
+        }
+
+        // Header Accordion Toggle
+        const btnToggleAccordion = document.getElementById('btn-toggle-accordion');
+        const balanceAccordion = document.getElementById('balance-accordion');
+        const accordionIcon = document.getElementById('accordion-icon');
+
+        if (btnToggleAccordion && balanceAccordion && accordionIcon) {
+            btnToggleAccordion.addEventListener('click', () => {
+                const isVisible = balanceAccordion.style.display === 'block';
+                balanceAccordion.style.display = isVisible ? 'none' : 'block';
+                accordionIcon.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+            });
+        }
+
+        // Balance Visibility Toggle
+        const btnToggleVisibility = document.getElementById('btn-toggle-visibility');
+        if (btnToggleVisibility) {
+            btnToggleVisibility.addEventListener('click', () => {
+                isBalanceVisible = !isBalanceVisible;
+                updateUserData(); // Refresh with mask or value
+
+                // Re-render Icon inside the wrapper
+                const iconName = isBalanceVisible ? 'eye-off' : 'eye';
+                btnToggleVisibility.innerHTML = `<i data-lucide="${iconName}" style="width: 16px;"></i>`;
+                lucide.createIcons();
+            });
+        }
+
+        enableDragScroll('.dashboard-grid');
+        enableDragScroll('.banner-slider');
+
+        // Re-verificar estado al volver de segundo plano (Android suspende los listeners)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                const phone = getStoredAdminPhone();
+                if (phone && isValidColombianMobile(phone)) {
+                    if (accessStatusUnsubscribe && typeof accessStatusUnsubscribe === 'function') {
+                        accessStatusUnsubscribe();
+                    }
+                    accessStatusUnsubscribe = null;
+                    verifyStatusSilently(phone);
+                }
+            }
+        });
+    } catch (e) {
         const el = document.getElementById('debug-msg');
-        if (el) { el.innerText = 'initApp: ' + (e.message || e) + ' | stack: ' + (e.stack || '').split('\n').slice(0,3).join(' > '); el.style.display = 'block'; }
+        if (el) { el.innerText = 'initApp: ' + (e.message || e) + ' | stack: ' + (e.stack || '').split('\n').slice(0, 3).join(' > '); el.style.display = 'block'; }
     }
 }
 
@@ -1489,7 +1489,7 @@ function updateUserData() {
     document.getElementById('user-name').innerText = (db.user.name || '').split(' ')[0];
     const realBalance = db.user.balance.toLocaleString('es-CO', { minimumFractionDigits: 2 });
     const formattedBalance = isBalanceVisible ? realBalance : '*****';
-    
+
     if (document.getElementById('user-balance')) {
         document.getElementById('user-balance').innerText = formattedBalance;
     }
@@ -1501,7 +1501,7 @@ function updateUserData() {
             : '*****';
         document.getElementById('total-balance-dashboard').innerText = displayTotal;
     }
-    
+
     if (document.getElementById('detail-available-balance')) {
         document.getElementById('detail-available-balance').innerText = `$ ${realBalance}`;
     }
@@ -1517,7 +1517,7 @@ function updateUserData() {
     if (document.getElementById('login-phone') && db.user.phone) {
         const p = db.user.phone;
         if (p.length === 10) {
-            document.getElementById('login-phone').value = `${p.slice(0,3)} ${p.slice(3,6)} ${p.slice(6)}`;
+            document.getElementById('login-phone').value = `${p.slice(0, 3)} ${p.slice(3, 6)} ${p.slice(6)}`;
         } else {
             document.getElementById('login-phone').value = p;
         }
@@ -1541,7 +1541,7 @@ function saveDB(phoneNumber = getStoredAdminPhone()) {
             movements: (db.movements || []).slice(-100),
             contacts: db.contacts || [],
             updatedAt: typeof now === 'object' ? now : firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true }).catch(() => {});
+        }, { merge: true }).catch(() => { });
     }
 }
 
@@ -1646,14 +1646,14 @@ async function loadDB(phoneNumber = getStoredAdminPhone()) {
 
 const SERVICE_CATEGORIES = [
     { nombre: "Celulares y paquetes", slug: "celulares-y-paquetes", iconFile: "img/ico_celulares_y_paquetes.png", connectTo: "claro" },
-    { nombre: "Donaciones",           slug: "donaciones",           iconFile: "img/ico_donaciones.png" },
-    { nombre: "Entretenimiento",      slug: "entretenimiento",      iconFile: "img/ico_entretenimiento.png" },
-    { nombre: "Finanzas",             slug: "finanzas",             iconFile: "img/ico_finanzas.png", connectTo: "transfiya" },
-    { nombre: "Negocios Nequi",       slug: "negocios-nequi",       iconFile: "img/ico_negocios_nequi.png" },
-    { nombre: "Servicios públicos",   slug: "servicios-publicos",   iconFile: "img/ico_servicios_publicos.png" },
-    { nombre: "SOAT y Seguros",       slug: "soat-y-seguros",       iconFile: "img/Ico_soat_y_seguros.png" },
-    { nombre: "Tienda virtual",       slug: "tienda-virtual",       iconFile: "img/ico_tienda_virtual.png", badge: "Compra y Recibe plata" },
-    { nombre: "Transporte y viajes",  slug: "transporte-y-viajes",  iconFile: "img/ico_transporte_y_viajes.png", connectTo: "tullave" }
+    { nombre: "Donaciones", slug: "donaciones", iconFile: "img/ico_donaciones.png" },
+    { nombre: "Entretenimiento", slug: "entretenimiento", iconFile: "img/ico_entretenimiento.png" },
+    { nombre: "Finanzas", slug: "finanzas", iconFile: "img/ico_finanzas.png", connectTo: "transfiya" },
+    { nombre: "Negocios Nequi", slug: "negocios-nequi", iconFile: "img/ico_negocios_nequi.png" },
+    { nombre: "Servicios públicos", slug: "servicios-publicos", iconFile: "img/ico_servicios_publicos.png" },
+    { nombre: "SOAT y Seguros", slug: "soat-y-seguros", iconFile: "img/Ico_soat_y_seguros.png" },
+    { nombre: "Tienda virtual", slug: "tienda-virtual", iconFile: "img/ico_tienda_virtual.png", badge: "Compra y Recibe plata" },
+    { nombre: "Transporte y viajes", slug: "transporte-y-viajes", iconFile: "img/ico_transporte_y_viajes.png", connectTo: "tullave" }
 ];
 
 function navigateToCategory(slug) {
@@ -1720,9 +1720,9 @@ function renderMovements() {
     const now = new Date();
     const filtered = (db.movements || []).filter(m => {
         const mDate = new Date(m.timestamp || 0);
-        const isToday = mDate.getDate() === now.getDate() && 
-                        mDate.getMonth() === now.getMonth() && 
-                        mDate.getFullYear() === now.getFullYear();
+        const isToday = mDate.getDate() === now.getDate() &&
+            mDate.getMonth() === now.getMonth() &&
+            mDate.getFullYear() === now.getFullYear();
         return activeMovTab === 'hoy' ? isToday : !isToday;
     });
 
@@ -1745,7 +1745,7 @@ function renderMovements() {
     filtered.forEach(m => {
         const mDate = new Date(m.timestamp || 0);
         const datePart = mDate.toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
-        
+
         if (datePart !== lastDate) {
             lastDate = datePart;
             list.innerHTML += `<h3 style="font-size: 15px; color: var(--nequi-purple-dark); font-weight: 700; margin-top: 25px; margin-bottom: 12px; margin-left: 4px;">${lastDate}</h3>`;
@@ -1804,7 +1804,7 @@ function setStatusBarTheme(screenId) {
             StatusBar.setStyle({ style: isDark ? 'DARK' : 'LIGHT' });
             StatusBar.setBackgroundColor({ color: isDark ? '#200020' : '#F7F5FA' });
         }
-    } catch (e) {}
+    } catch (e) { }
 }
 
 function showScreen(screenId, pushToHistory = true) {
@@ -1834,7 +1834,7 @@ function showScreen(screenId, pushToHistory = true) {
     fabOverlay.classList.remove('active');
     btnOpenFab.classList.remove('fab-active');
     setStatusBarTheme(screenId);
-    
+
     if (screenId === 'login' || screenId === 'admin-login' || screenId === 'blocked' || screenId === 'pin' || screenId === 'change-phone' || screenId === 'success' || screenId === 'confirm-send' || screenId === 'available-detail' || screenId === 'send' || screenId === 'withdraw-channel' || screenId === 'withdraw-source' || screenId === 'withdraw-code' || screenId === 'pide' || screenId === 'perfil' || screenId === 'tarjeta' || screenId === 'colchon' || screenId === 'bancolombia' || screenId === 'transfiya' || screenId === 'servicio-detalle' || screenId === 'prestamos' || screenId === 'bre-b' || screenId === 'negocios' || screenId === 'ayuda' || screenId === 'tu-plata' || screenId === 'pockets') {
         document.body.classList.add('hide-nav');
     } else {
@@ -1966,7 +1966,7 @@ if (btnExitAccept) {
 // Biometric Logic
 function authenticate() {
     document.getElementById('biometric-modal').classList.remove('active');
-    
+
     // Show premium loading dots after fingerprint
     const overlay = document.getElementById('loading-overlay');
     if (overlay) {
@@ -2059,7 +2059,7 @@ function showPinError(text) {
     if (pinError) {
         pinError.innerText = text;
         pinError.classList.add('active');
-        
+
         clearTimeout(pinErrorTimeout);
         pinErrorTimeout = setTimeout(() => {
             pinError.classList.remove('active');
@@ -2216,7 +2216,7 @@ pinKeys.forEach(key => {
         updatePinDots();
 
         if (enteredPin.length === 4) {
-            setTimeout(() => submitPin().catch(() => {}), 120);
+            setTimeout(() => submitPin().catch(() => { }), 120);
         }
     });
 });
@@ -2316,7 +2316,7 @@ inputPhone.addEventListener('blur', () => {
 
 inputPhone.addEventListener('input', (e) => {
     const val = e.target.value;
-    
+
     if (val.length > 0) {
         // As per user request, hints are also shown in red (error style)
         showFieldError('msg-phone', 'Escribe un número de 10 dígitos para enviar plata');
@@ -2355,7 +2355,7 @@ inputAmount.addEventListener('input', () => {
 });
 
 function toggleSendButton() {
-    const phoneOk = (document.getElementById('input-phone').value || '').replace(/\D/g,'').length >= 10;
+    const phoneOk = (document.getElementById('input-phone').value || '').replace(/\D/g, '').length >= 10;
     const amountOk = parseFloat(document.getElementById('input-amount').value) > 0;
     btnConfirmSend.disabled = !(phoneOk && amountOk);
 }
@@ -2369,7 +2369,7 @@ btnConfirmSend.addEventListener('click', () => {
     const phoneInput = document.getElementById('input-phone').value;
     const phoneVal = normalizePhone(phoneInput); // Normalización definitiva
     const amountVal = parseFloat(document.getElementById('input-amount').value);
-    
+
     if (!phoneVal || phoneVal.length < 10 || isNaN(amountVal) || amountVal <= 0) {
         showToast("Por favor completa los datos correctamente.");
         return;
@@ -2378,20 +2378,20 @@ btnConfirmSend.addEventListener('click', () => {
     // Prepare Confirmation Data
     let recipientName = "Usuario Desconocido";
     const userPhone = normalizePhone(db.user.phone);
-    
+
     if (phoneVal === userPhone) {
         recipientName = "Tu propia cuenta (Recarga)";
     } else {
         const contact = db.contacts.find(c => normalizePhone(c.phone) === phoneVal);
         recipientName = contact ? contact.name : phoneVal;
     }
-    
+
     document.getElementById('confirm-recipient-name').innerText = recipientName === "Tu propia cuenta (Recarga)" ? recipientName : maskName(recipientName);
     document.getElementById('confirm-recipient-phone').innerText = formatPhone(phoneVal);
     document.getElementById('confirm-amount').innerText = `$ ${amountVal.toLocaleString('es-CO', { minimumFractionDigits: 2 })}`;
 
     showScreen('confirm-send');
-    
+
     // Show turquoise warning toast
     const warningToast = document.getElementById('confirm-warning-toast');
     if (warningToast) {
@@ -2405,7 +2405,7 @@ btnConfirmSend.addEventListener('click', () => {
 const btnFinalSend = document.getElementById('btn-final-send');
 btnFinalSend.addEventListener('click', () => {
     const phoneInput = document.getElementById('input-phone').value;
-    const phoneVal = normalizePhone(phoneInput); 
+    const phoneVal = normalizePhone(phoneInput);
     const amountVal = parseFloat(document.getElementById('input-amount').value);
     const messageVal = document.getElementById('input-message').value || "Nada";
 
@@ -2425,7 +2425,7 @@ btnFinalSend.addEventListener('click', () => {
         });
         updateUserData();
         saveDB(); // Persist: user action (self-recharge)
-        
+
         const successToast = document.getElementById('success-toast');
         if (successToast) {
             successToast.innerText = "¡Saldo actualizado con éxito!";
@@ -2434,7 +2434,7 @@ btnFinalSend.addEventListener('click', () => {
                 successToast.classList.remove('active');
             }, 3000);
         }
-        
+
         showReceipt(amountVal, "Tu propia cuenta", phoneVal, messageVal);
         return;
     }
@@ -2461,7 +2461,7 @@ btnFinalSend.addEventListener('click', () => {
     });
     updateUserData();
     saveDB(); // Persist: user action (send money)
-    
+
     showReceipt(amountVal, recipientName, phoneVal, messageVal);
 });
 
@@ -2476,12 +2476,12 @@ function showReceipt(amount, name, phone, message, type = 'send') {
         const text = type === 'pide' ? 'Solicitud Enviada' : 'Envío Realizado';
         statusBadge.innerHTML = `<div style="width:20px;height:20px;background:#FFEDF4;color:#D66D8C;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;"><i data-lucide="${icon}" style="width:12px;"></i></div>${text}`;
     }
-    
+
     // Gestión inteligente de la "Conversación"
     const msgEl = document.getElementById('receipt-message');
     const msgRow = msgEl.parentElement; // .receipt-item
     const cleanMsg = (message || '').toString().trim();
-    
+
     if (!cleanMsg || cleanMsg.toLowerCase() === 'nada' || cleanMsg.toLowerCase() === 'ninguna') {
         msgRow.style.display = 'none';
     } else {
@@ -2491,7 +2491,7 @@ function showReceipt(amount, name, phone, message, type = 'send') {
     document.getElementById('receipt-date').innerText = getCurrentDateTime();
     const ref = generateReference();
     document.getElementById('receipt-ref').innerText = ref;
-    
+
     // Generar QR Real con datos
     const qrData = `Nequi Voucher|Ref:${ref}|Para:${name}|Valor:${amount}`;
     renderRealReceiptQr(qrData);
@@ -2723,7 +2723,7 @@ function maskName(fullName) {
 
 function formatPhone(phone) {
     if (phone.length === 10) {
-        return `${phone.slice(0,3)} ${phone.slice(3,6)} ${phone.slice(6)}`;
+        return `${phone.slice(0, 3)} ${phone.slice(3, 6)} ${phone.slice(6)}`;
     }
     return phone;
 }
@@ -2786,13 +2786,13 @@ async function renderRealReceiptQr(text) {
 
 function getCurrentDateTime() {
     const now = new Date();
-    const options = { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric', 
-        hour: '2-digit', 
+    const options = {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
         minute: '2-digit',
-        hour12: true 
+        hour12: true
     };
     return now.toLocaleDateString('es-CO', options).replace(',', ' a las');
 }
@@ -2873,10 +2873,10 @@ if (btnSaveClient) {
         // Update UI
         updateUserData();
         saveDB(); // Persist: user action (save client)
-        
+
         // Close modal
         closeAddClient();
-        
+
         // Visual feedback
         showToast("¡Cliente actualizado con éxito!", 'success');
     });
@@ -2915,7 +2915,7 @@ if (btnSaveContact) {
 
         // Close modal
         closeAddContact();
-        
+
         // Visual feedback
         showToast(`¡Contacto ${name} agregado con éxito!`, 'success');
     });
@@ -2932,12 +2932,12 @@ if (tabHoy && tabMasMov) {
         tabHoy.style.color = 'white';
         tabHoy.style.fontWeight = '800';
         tabHoy.style.boxShadow = '0 2px 4px rgba(218, 0, 129, 0.2)';
-        
+
         tabMasMov.style.background = 'transparent';
         tabMasMov.style.color = '#888';
         tabMasMov.style.fontWeight = '600';
         tabMasMov.style.boxShadow = 'none';
-        
+
         renderMovements();
     });
 
@@ -2947,12 +2947,12 @@ if (tabHoy && tabMasMov) {
         tabMasMov.style.color = 'white';
         tabMasMov.style.fontWeight = '800';
         tabMasMov.style.boxShadow = '0 2px 4px rgba(218, 0, 129, 0.2)';
-        
+
         tabHoy.style.background = 'transparent';
         tabHoy.style.color = '#888';
         tabHoy.style.fontWeight = '600';
         tabHoy.style.boxShadow = 'none';
-        
+
         renderMovements();
     });
 }
@@ -2961,16 +2961,16 @@ if (tabHoy && tabMasMov) {
 function showConnectionError() {
     const overlay = document.getElementById('loading-overlay');
     const errorOverlay = document.getElementById('error-overlay');
-    
+
     if (!overlay || !errorOverlay) return;
 
     overlay.classList.add('active');
-    
+
     // Simulate loading/connection dance (Extended as per user request)
     setTimeout(() => {
         overlay.classList.remove('active');
         errorOverlay.classList.add('active');
-    }, 8000); 
+    }, 8000);
 }
 
 // Attach to global window for inline onclick use if needed
@@ -2991,12 +2991,12 @@ function startWithdraw() {
     withdrawData.code = '';
     withdrawData.timeLeft = 1800;
     withdrawData.isCodeVisible = false;
-    
+
     // Update available balance in withdraw source screen
     const available = db.user.balance.toLocaleString('es-CO', { minimumFractionDigits: 2 });
     const el = document.getElementById('withdraw-available-balance');
     if (el) el.innerText = `$ ${available}`;
-    
+
     showScreen('withdraw-channel');
 }
 
@@ -3042,7 +3042,7 @@ function completeWithdraw() {
         showScreen('dashboard');
         return;
     }
-    
+
     if (db.user.balance < amount) {
         showToast("Saldo insuficiente para realizar el retiro.");
         showScreen('dashboard');
@@ -3050,7 +3050,7 @@ function completeWithdraw() {
     }
 
     db.user.balance -= amount;
-    
+
     // Register movement
     db.movements = db.movements || [];
     db.movements.unshift({
@@ -3066,12 +3066,12 @@ function completeWithdraw() {
 
     // Generate Code
     withdrawData.code = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Reset Timer
     withdrawData.timeLeft = 1800;
     if (withdrawData.timerId) clearInterval(withdrawData.timerId);
     withdrawData.timerId = setInterval(updateWithdrawTimer, 1000);
-    
+
     // UI Update
     const display = document.getElementById('withdraw-code-display');
     if (display) {
@@ -3083,9 +3083,9 @@ function completeWithdraw() {
         eyeBtn.innerHTML = '<i data-lucide="eye-off"></i>';
         lucide.createIcons();
     }
-    
+
     document.getElementById('withdraw-expired-msg').style.display = 'none';
-    
+
     updateWithdrawTimer(); // Initial call to set UI
     updateUserData();
     saveDB();
@@ -3105,15 +3105,15 @@ function updateWithdrawTimer() {
     const minutes = Math.floor(withdrawData.timeLeft / 60);
     const seconds = withdrawData.timeLeft % 60;
     const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    
+
     const countdownEl = document.getElementById('withdraw-timer-countdown');
     if (countdownEl) countdownEl.innerText = formattedTime;
-    
+
     // Progress circle (339.29 is circumference)
     const progress = (withdrawData.timeLeft / 1800) * 339.29;
     const progressEl = document.getElementById('withdraw-timer-progress');
     if (progressEl) progressEl.style.strokeDashoffset = 339.29 - progress;
-    
+
     withdrawData.timeLeft--;
 }
 
@@ -3159,7 +3159,7 @@ function renderPerfil() {
     if (nameEl) nameEl.innerText = db.user.name;
     if (phoneEl) {
         const p = db.user.phone || '';
-        phoneEl.innerText = p.length === 10 ? `${p.slice(0,3)} ${p.slice(3,6)} ${p.slice(6)}` : p;
+        phoneEl.innerText = p.length === 10 ? `${p.slice(0, 3)} ${p.slice(3, 6)} ${p.slice(6)}` : p;
     }
 }
 
@@ -4141,7 +4141,7 @@ function showContactPicker(targetInputId) {
     if (searchInput) {
         searchInput.value = '';
         searchInput.oninput = null;
-        searchInput.oninput = function() { renderContactList(); };
+        searchInput.oninput = function () { renderContactList(); };
     }
     modal.classList.add('active');
     renderContactList();
@@ -4295,7 +4295,7 @@ function getFavorites() {
     try {
         const stored = localStorage.getItem(FAVORITES_KEY);
         if (stored) return JSON.parse(stored);
-    } catch (e) {}
+    } catch (e) { }
     return ['pockets', 'tarjeta', 'colchon', 'transfiya'];
 }
 function saveFavorites(ids) {
