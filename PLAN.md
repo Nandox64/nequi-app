@@ -106,8 +106,8 @@ Clon funcional de la app Nequi Colombia — web app + Android (Capacitor) + scri
 - [x] Banner-inicio respeta safe area (`top: var(--system-status-safe-top)`)
 
 ### En progreso
-- [ ] Splash de inicio con logo Nequi animado (reemplazar `#splash-screen`)
-- [ ] Splash actual (puntos saltando) queda como `#loading-overlay` genérico
+- [x] Splash de inicio con logo Nequi animado (N-equi split con desaparición de 'equi')
+- [x] Splash actual (puntos saltando) queda como `#loading-overlay` genérico
 
 ## Notas
 - `Codigos.txt` está vacío

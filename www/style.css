@@ -1883,75 +1883,7 @@ body.hide-nav #btn-open-fab {
     }
 }
 
-.dance-container {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    animation: mainRotate 2s infinite linear;
-}
 
-.dot {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    background: var(--nequi-magenta);
-    border-radius: 6px;
-    margin-top: -10px;
-    margin-left: -10px;
-}
-
-.dot-1 {
-    animation: dotDance1 2s infinite ease-in-out;
-}
-
-.dot-2 {
-    background: var(--nequi-purple-dark);
-    animation: dotDance2 2s infinite ease-in-out;
-}
-
-@keyframes mainRotate {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes dotDance1 {
-
-    0%,
-    100% {
-        transform: translateX(0) rotate(0deg);
-    }
-
-    30% {
-        transform: translateX(-30px) rotate(180deg);
-    }
-
-    70% {
-        transform: translateX(0) rotate(360deg);
-    }
-}
-
-@keyframes dotDance2 {
-
-    0%,
-    100% {
-        transform: translateX(0) rotate(0deg);
-    }
-
-    30% {
-        transform: translateX(30px) rotate(-180deg);
-    }
-
-    70% {
-        transform: translateX(0) rotate(-360deg);
-    }
-}
 
 .error-message-overlay {
     position: fixed;
@@ -2151,16 +2083,17 @@ body.hide-nav #btn-open-fab {
 /* Full-screen banner before login */
 /* TODO: restaurar cuando termine el splash animado - quitar display:none */
 .banner-inicio {
-    display: none !important;
     position: fixed;
     top: var(--system-status-safe-top);
     left: 0;
     width: 100%;
     height: calc(100% - var(--system-status-safe-top));
-    background: #000 url('img/banner_inicio.jpeg') no-repeat center center;
+    /* background: #000 url('img/banner_inicio.jpeg') no-repeat center center; */
+    background: #000; /* Desactivado temporalmente */
     background-size: cover;
     z-index: 15000;
     cursor: pointer;
+    display: none !important; /* Desactivado temporalmente */
     align-items: flex-end;
     justify-content: center;
     transition: opacity 0.5s ease-out;
@@ -2211,19 +2144,94 @@ body.hide-nav #btn-open-fab {
 }
 
 .splash-logo-left {
+    left: 0;
+    width: 33%;
     z-index: 2;
+    background: url('img/logo_nequi_2.png') no-repeat;
+    background-size: 300% 100%;
+    background-position: 0 0;
+    animation: slideN 1.2s ease-in-out forwards;
 }
 
 .splash-logo-right {
+    left: 33%;
+    width: 67%;
     z-index: 1;
+    background: url('img/logo_nequi_2.png') no-repeat;
+    background-size: 149.25% 100%;
+    background-position: right 0;
+    animation: slideEqui 1.2s ease-in-out forwards;
 }
 
-.splash-logo-img {
-    display: block;
-    max-width: none;
-    height: 100%;
-    position: absolute;
+@keyframes slideN {
+    0% { left: 0; }
+    100% { left: 17%; }
+}
+
+@keyframes slideEqui {
+    0% { left: 33%; opacity: 1; }
+    75% { opacity: 1; }
+    100% { left: 17%; opacity: 0; }
+}
+
+/* Generic Loading Overlay (Dancing Dots) */
+.loading-overlay {
+    position: fixed;
     top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 30000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.dance-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    animation: mainRotate 2s infinite linear;
+}
+
+.dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    background: var(--nequi-magenta);
+    border-radius: 6px;
+    margin-top: -9px;
+    margin-left: -9px;
+}
+
+.dot-1 {
+    animation: dotDance1 2s infinite ease-in-out;
+}
+
+.dot-2 {
+    background: var(--nequi-purple-dark);
+    animation: dotDance2 2s infinite ease-in-out;
+}
+
+@keyframes mainRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes dotDance1 {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    30% { transform: translateX(-25px) rotate(180deg); }
+    70% { transform: translateX(0) rotate(360deg); }
+}
+
+@keyframes dotDance2 {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    30% { transform: translateX(25px) rotate(-180deg); }
+    70% { transform: translateX(0) rotate(-360deg); }
 }
 
 /* Movimientos Styles */
