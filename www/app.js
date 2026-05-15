@@ -1794,6 +1794,14 @@ function setStatusBarTheme(screenId) {
     if (window.SystemBarBridge) {
         SystemBarBridge.setSystemBarsStyle(isDark ? 'dark' : 'light');
     }
+
+    try {
+        const StatusBar = Capacitor.Plugins.StatusBar;
+        if (StatusBar) {
+            StatusBar.setStyle({ style: isDark ? 'DARK' : 'LIGHT' });
+            StatusBar.setBackgroundColor({ color: isDark ? '#200020' : '#F7F5FA' });
+        }
+    } catch (e) {}
 }
 
 function showScreen(screenId, pushToHistory = true) {
