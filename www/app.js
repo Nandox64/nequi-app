@@ -1396,6 +1396,16 @@ function showToast(text, type = 'error', duration = 4000) {
     el._hideTimer = setTimeout(() => el.classList.remove('active'), duration);
 }
 
+// Show loading then "no connection" message (replaces "Próximamente")
+function showComingSoon() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) overlay.classList.add('active');
+    setTimeout(() => {
+        if (overlay) overlay.classList.remove('active');
+        showToast('No se pudo cargar la pantalla, revisa tu conexión a internet', 'warning', 4000);
+    }, 1500);
+}
+
 // Toggle password visibility (eye icon)
 function togglePasswordVisibility(inputId, iconId) {
     const input = document.getElementById(inputId);
@@ -2397,6 +2407,7 @@ function showDashboardMessage(feature) {
 }
 
 window.showToast = showToast;
+window.showComingSoon = showComingSoon;
 window.togglePasswordVisibility = togglePasswordVisibility;
 window.showQRCode = showQRCode;
 window.closeQRCode = closeQRCode;

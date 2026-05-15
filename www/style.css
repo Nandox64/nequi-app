@@ -1034,6 +1034,12 @@ body.hide-nav #btn-open-fab {
 }
 
 /* Bottom Sheet Modal */
+/* Bottom sheet modals - prevent button overlap with nav */
+#add-contact-modal .sheet-content,
+#add-client-modal .sheet-content {
+    padding-bottom: calc(var(--bottom-nav-height) + 20px);
+}
+
 .bottom-sheet-overlay {
     position: fixed !important;
     top: 0 !important;
