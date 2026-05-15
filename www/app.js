@@ -4262,7 +4262,7 @@ const FAVORITE_ITEMS = [
     { id: 'tarjeta', name: 'Tarjeta', icon: 'img/logo_tarjeta.png' },
     { id: 'colchon', name: 'Colchón', icon: 'img/logo_colchon.png' },
     { id: 'transfiya', name: 'Transfiya', icon: 'img/logo_transfiya.png' },
-    { id: 'prestamos', name: 'Préstamos', icon: 'logo_créditos.png' },
+    { id: 'prestamos', name: 'Préstamos', icon: 'img/logo_creditos.png' },
     { id: 'breb', name: 'Bre-B', icon: 'img/logo_bre-b.png' },
     { id: 'negocios', name: 'Negocios', icon: 'img/logo_app_nequi_negocios.png' },
     { id: 'tullave', name: 'Maas tullave', icon: 'img/logo_tullave.png' },
