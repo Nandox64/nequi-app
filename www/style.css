@@ -97,6 +97,20 @@ body {
     padding-bottom: calc(var(--bottom-nav-height) + var(--system-nav-safe-bottom) + var(--bottom-nav-lift) + 12px);
 }
 
+/* Offline banner */
+.offline-banner {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #FFA726;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    padding: 6px 12px;
+    width: 100%;
+}
+
 .screen.active {
     display: flex;
     animation: fadeIn var(--transition-speed) ease-out;
@@ -2159,6 +2173,16 @@ color: var(--nequi-purple-dark);
     padding: 16px;
     margin: 0 20px 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.pockets-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
 }
 
 .pockets-list .sheet-card:last-child {

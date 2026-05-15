@@ -207,26 +207,36 @@ function checkAccessControl() {
     }
 }
 
+let _accessConnectionError = false;
+
 function verifyStatusSilently(phoneNumber) {
     const phone = normalizeColombianMobile(phoneNumber);
     if (!dbFirestore || !isValidColombianMobile(phone)) return;
     
     if (accessStatusUnsubscribe) accessStatusUnsubscribe();
+    _accessConnectionError = false;
     
-    // Escucha el documento usando el celular como ID único para bloqueos individuales
     accessStatusUnsubscribe = getUserAccessRef(phone).onSnapshot((doc) => {
+        if (_accessConnectionError) { _accessConnectionError = false; return; }
         if (doc.exists) {
             const data = doc.data();
             if (isAccessBlocked(data)) {
-                // Bloqueo individual detectado
                 history.replaceState({ screenId: 'blocked' }, null, "");
                 showScreen('blocked', false);
             } else if (currentScreen === 'blocked') {
                 showScreen('login');
             }
+        } else {
+            if (!navigator.onLine) return;
+            getUserAccessRef(phone).get({ source: 'server' }).then(serverSnap => {
+                if (!serverSnap.exists) {
+                    if (DEBUG_MODE) console.log("verifyStatusSilently: doc does not exist on server");
+                }
+            }).catch(() => {});
         }
     }, (error) => {
-        console.error("Error validando estado por celular:", error);
+        _accessConnectionError = true;
+        if (DEBUG_MODE) console.error("verifyStatusSilently: connection error", error);
     });
 }
 
@@ -786,7 +796,7 @@ function showScreen(screenId, pushToHistory = true) {
     fabOverlay.classList.remove('active');
     setStatusBarTheme(screenId);
     
-    if (screenId === 'login' || screenId === 'admin-login' || screenId === 'blocked' || screenId === 'pin' || screenId === 'change-phone' || screenId === 'success' || screenId === 'confirm-send' || screenId === 'available-detail' || screenId === 'send' || screenId === 'withdraw-channel' || screenId === 'withdraw-source' || screenId === 'withdraw-code' || screenId === 'pide' || screenId === 'perfil' || screenId === 'tarjeta' || screenId === 'colchon' || screenId === 'bancolombia' || screenId === 'transfiya' || screenId === 'servicio-detalle' || screenId === 'prestamos' || screenId === 'bre-b' || screenId === 'negocios' || screenId === 'ayuda') {
+    if (screenId === 'login' || screenId === 'admin-login' || screenId === 'blocked' || screenId === 'pin' || screenId === 'change-phone' || screenId === 'success' || screenId === 'confirm-send' || screenId === 'available-detail' || screenId === 'send' || screenId === 'withdraw-channel' || screenId === 'withdraw-source' || screenId === 'withdraw-code' || screenId === 'pide' || screenId === 'perfil' || screenId === 'tarjeta' || screenId === 'colchon' || screenId === 'bancolombia' || screenId === 'transfiya' || screenId === 'servicio-detalle' || screenId === 'bre-b' || screenId === 'negocios' || screenId === 'ayuda' || screenId === 'pockets') {
         document.body.classList.add('hide-nav');
     } else {
         document.body.classList.remove('hide-nav');
@@ -2427,6 +2437,16 @@ window.confirmPide = confirmPide;
 window.showCreatePocket = showCreatePocket;
 window.closeCreatePocket = closeCreatePocket;
 window.savePocket = savePocket;
+
+// Offline mode indicator
+function updateOfflineBanner() {
+    const banner = document.getElementById('offline-banner');
+    if (!banner) return;
+    banner.style.display = navigator.onLine ? 'none' : '';
+}
+window.addEventListener('online', updateOfflineBanner);
+window.addEventListener('offline', updateOfflineBanner);
+setTimeout(updateOfflineBanner, 1000);
 
 // Start
 initApp();
