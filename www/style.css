@@ -166,7 +166,7 @@ body {
 /* Header */
 header {
     background-color: var(--nequi-bg);
-    background-image: url('fondo_superior.png');
+    background-image: url('img/fondo_superior.png');
     background-size: 100% 100%;
     background-position: top center;
     background-repeat: no-repeat;
@@ -1334,7 +1334,7 @@ body.hide-nav #btn-open-fab {
 }
 
 .receipt-card {
-    background: url('fondo_voucher.png') no-repeat center center;
+    background: url('img/fondo_voucher.png') no-repeat center center;
     background-size: 100% 100%;
     margin: 10px 15px;
     position: relative;

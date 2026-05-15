@@ -12,12 +12,12 @@ const db = {
   ],
   "movements": [],
   "services": [
-    { "id": "claro", "name": "Claro", "image": "logo_claro.png" },
-    { "id": "tigo", "name": "Tigo", "image": "logo_tigo.png" },
-    { "id": "wom", "name": "WOM", "image": "logo_wom.png" },
-    { "id": "tullave", "name": "Maas tullave", "image": "logo_tullave.png" },
-    { "id": "transfiya", "name": "Transfiya", "image": "logo_transfiya.png" },
-    { "id": "breb", "name": "Bre-B", "image": "logo_bre-b.png" }
+    { "id": "claro", "name": "Claro", "image": "img/logo_claro.png" },
+    { "id": "tigo", "name": "Tigo", "image": "img/logo_tigo.png" },
+    { "id": "wom", "name": "WOM", "image": "img/logo_wom.png" },
+    { "id": "tullave", "name": "Maas tullave", "image": "img/logo_tullave.png" },
+    { "id": "transfiya", "name": "Transfiya", "image": "img/logo_transfiya.png" },
+    { "id": "breb", "name": "Bre-B", "image": "img/logo_bre-b.png" }
   ],
   "notifications": [
     { "id": 1, "type": "recibida", "title": "Recibiste dinero", "message": "Has recibido $50.000 de Roberto Carlos", "time": "Hace 2 horas", "read": false },

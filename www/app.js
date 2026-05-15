@@ -730,7 +730,7 @@ function renderMovements() {
     if (filtered.length === 0) {
         list.innerHTML = `
             <div style="text-align: center; padding: 50px 20px;">
-                <img src="sin_movimientos.png" alt="Sin movimientos" style="width: 180px; margin-bottom: 24px; max-width: 100%;">
+                <img src="img/sin_movimientos.png" alt="Sin movimientos" style="width: 180px; margin-bottom: 24px; max-width: 100%;">
                 <h3 style="color: var(--nequi-purple-dark); font-size: 15px; margin-bottom: 8px; font-weight: 700;">
                     ${activeMovTab === 'hoy' ? 'Hoy no has hecho ningún movimiento.' : 'No tienes movimientos anteriores.'}
                 </h3>
@@ -1299,7 +1299,7 @@ document.addEventListener('click', (e) => {
                 }, 'image/png');
             });
         }).then((blob) => {
-            const file = new File([blob], 'voucher-nequi.png', { type: 'image/png' });
+            const file = new File([blob], 'img/voucher-nequi.png', { type: 'image/png' });
 
             if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                 navigator.share({
@@ -1377,7 +1377,7 @@ function renderRealReceiptQr(text) {
     const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(text)}&color=200020`;
     qrContainer.innerHTML = `
         <img src="${apiUrl}" alt="QR Code" class="qr-main-img">
-        <img src="logo_n.png" alt="N" class="qr-center-logo">
+        <img src="img/logo_n.png" alt="N" class="qr-center-logo">
     `;
 }
 
@@ -2387,7 +2387,7 @@ function renderNotifications() {
     if (filtered.length === 0) {
         container.innerHTML = `
             <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;">
-                <img src="notificaciones.png" alt="Sin notificaciones" style="width:180px;margin-bottom:24px;max-width:100%;">
+                <img src="img/notificaciones.png" alt="Sin notificaciones" style="width:180px;margin-bottom:24px;max-width:100%;">
                 <p style="font-size:16px;color:#888;font-weight:600;">No tienes notificaciones</p>
             </div>
         `;
