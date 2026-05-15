@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Nequi</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login -->
+        <section id="screen-login" class="screen active">
+            <div class="login-box">
+                <div class="logo">
+                    <div class="dot dot-1"></div>
+                    <div class="dot dot-2"></div>
+                </div>
+                <h1>Panel Administrativo</h1>
+                <p class="subtitle">Nequi Colombia</p>
+                <div class="form-group">
+                    <label>Email admin</label>
+                    <input type="email" id="admin-email" placeholder="admin@nequi.co" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="admin-password" placeholder="••••••" autocomplete="current-password">
+                </div>
+                <p id="login-error" class="error-msg"></p>
+                <button class="btn-primary" id="btn-login" onclick="handleLogin()">Ingresar</button>
+            </div>
+        </section>
+
+        <!-- Dashboard -->
+        <section id="screen-dashboard" class="screen">
+            <div class="top-bar">
+                <h2>Usuarios</h2>
+                <div class="top-actions">
+                    <span id="user-count" class="badge">0</span>
+                    <button class="btn-icon" onclick="showNotifyModal()" title="Enviar notificación" style="color:var(--nequi-magenta);border-color:var(--nequi-magenta);">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                    </button>
+                    <button class="btn-icon" onclick="logout()" title="Cerrar sesión">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="users-table">
+                    <thead>
+                        <tr>
+                            <th>Teléfono</th>
+                            <th>Nombre</th>
+                            <th>Saldo</th>
+                            <th>Dispositivo</th>
+                            <th>Estado</th>
+                            <th>Bloqueado</th>
+                            <th>Intentos</th>
+                            <th>Última sesión</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <tr><td colspan="9" class="loading">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal-overlay" onclick="if(event.target===this)closeHistory()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="history-title">Historial de accesos</h3>
+                <button class="btn-icon" onclick="closeHistory()">&times;</button>
+            </div>
+            <div id="history-body" class="modal-body">
+                <p class="loading">Cargando...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Data Modal -->
+    <div id="userdata-modal" class="modal-overlay" onclick="if(event.target===this)closeUserData()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="userdata-title">Datos del usuario</h3>
+                <button class="btn-icon" onclick="closeUserData()">&times;</button>
+            </div>
+            <div id="userdata-body" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Send Notification Modal -->
+    <div id="notify-modal" class="modal-overlay" onclick="if(event.target===this)closeNotifyModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Enviar notificación</h3>
+                <button class="btn-icon" onclick="closeNotifyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Destino</label>
+                    <select id="notify-target" onchange="toggleNotifyPhone()" style="width:100%;padding:12px 16px;border:2px solid var(--nequi-border);border-radius:8px;font-size:15px;">
+                        <option value="all">A todos los usuarios</option>
+                        <option value="specific">A un usuario específico</option>
+                    </select>
+                </div>
+                <div class="form-group" id="notify-phone-group" style="display:none;">
+                    <label>Teléfono del usuario</label>
+                    <input type="text" id="notify-phone" placeholder="3001234567" maxlength="10" inputmode="numeric" pattern="[0-9]*">
+                </div>
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" id="notify-title" placeholder="Ej: Nuevo movimiento" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>Mensaje</label>
+                    <textarea id="notify-message" placeholder="Ej: Recibiste $50,000 de Juan" maxlength="300" rows="3" style="width:100%;padding:12px 16px;border:2px solid var(--nequi-border);border-radius:8px;font-size:15px;resize:none;"></textarea>
+                </div>
+                <p id="notify-result" class="error-msg"></p>
+                <button class="btn-primary" id="btn-send-notify" onclick="sendNotification()">Enviar notificación</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js?v=5"></script>
+</body>
+</html>

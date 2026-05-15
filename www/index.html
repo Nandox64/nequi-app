@@ -218,7 +218,7 @@
                                 Tarjeta Nequi Visa</h4>
                             <p style="font-size: 12px; color: #554455; margin-bottom: 15px; line-height: 1.2;">Si la
                                 pides digital se activa al instante</p>
-                            <button onclick="showToast('Solicitar tarjeta Nequi Visa - Próximamente', 'info')"
+                            <button onclick="showComingSoon()"
                                 style="background: #1A001A; color: white; border: none; padding: 8px 18px; border-radius: 5px; font-size: 13px; font-weight: 700; cursor: pointer;">Pedir
                                 tarjeta</button>
                         </div>
@@ -242,7 +242,7 @@
                         <div class="action-square"><img src="logo_colchon.png" alt="Colchón"></div>
                         <span>Colchón</span>
                     </div>
-                    <div class="dashboard-action" onclick="showToast('Agregar a favoritos - Próximamente', 'info')">
+                    <div class="dashboard-action" onclick="showComingSoon()">
                         <div class="action-square"><img src="logo_agrega.png" alt="Agregar"></div>
                         <span>Agregar</span>
                     </div>
@@ -368,7 +368,7 @@
                 <div class="form-group" style="margin-bottom: 30px;">
                     <div class="input-container floating">
                         <input type="tel" id="input-phone" placeholder=" " maxlength="10" inputmode="numeric"
-                            pattern="[0-9]*" style="color: var(--nequi-text);">
+                            pattern="[0-9]*" style="color: var(--nequi-text);" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">Cel</label>
                         <i data-lucide="user-plus" style="color: var(--nequi-magenta); cursor: pointer;"></i>
                     </div>
@@ -618,7 +618,7 @@
                     <div class="card-text"><h4>Editar perfil</h4><p>Nombre y datos personales</p></div>
                     <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
                 </div>
-                <div class="sheet-card" onclick="showToast('Configuración de seguridad - Próximamente', 'info')">
+                <div class="sheet-card" onclick="showComingSoon()">
                     <div class="card-icon"><i data-lucide="shield"></i></div>
                     <div class="card-text"><h4>Seguridad</h4><p>Clave, huella y más</p></div>
                     <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
@@ -667,7 +667,7 @@
                 </div>
                 <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                     <button id="btn-tarjeta-toggle" class="btn-small" style="flex: 1;" onclick="toggleTarjetaStatus()">Bloquear</button>
-                    <button class="btn-small" style="flex: 1; background: var(--nequi-magenta);" onclick="showToast('Solicitar tarjeta digital - Próximamente', 'info')">Digital</button>
+                    <button class="btn-small" style="flex: 1; background: var(--nequi-magenta);" onclick="showComingSoon()">Digital</button>
                 </div>
                 <div class="sheet-card" onclick="showScreen('movements')">
                     <div class="card-icon"><i data-lucide="arrow-down-up"></i></div>
@@ -928,7 +928,7 @@
                     <div class="card-text"><h4>Más información</h4><p>Conoce todos los beneficios</p></div>
                     <i data-lucide="chevron-right" style="color: var(--nequi-text-gray);"></i>
                 </div>
-                <button class="btn-primary" style="margin-top: 30px;" onclick="showToast('Solicitar Nequi Negocios - Próximamente', 'info')">Solicitar ahora</button>
+                <button class="btn-primary" style="margin-top: 30px;" onclick="showComingSoon()">Solicitar ahora</button>
             </div>
         </section>
 
@@ -950,22 +950,22 @@
                 </div>
             </div>
             <div class="content" style="flex:1;padding-top:0;">
-                <div class="sheet-card" onclick="showToast('Reportar un movimiento - Próximamente', 'info')">
+                <div class="sheet-card" onclick="showComingSoon()">
                     <div class="card-icon"><i data-lucide="alert-triangle" style="color:var(--nequi-magenta);"></i></div>
                     <div class="card-text"><h4>Reportar un movimiento</h4></div>
                     <i data-lucide="chevron-right" style="color:var(--nequi-text-gray);"></i>
                 </div>
-                <div class="sheet-card" onclick="showToast('Estado de tus casos - Próximamente', 'info')">
+                <div class="sheet-card" onclick="showComingSoon()">
                     <div class="card-icon"><i data-lucide="clipboard-list" style="color:var(--nequi-purple-dark);"></i></div>
                     <div class="card-text"><h4>Estado de tus casos</h4></div>
                     <i data-lucide="chevron-right" style="color:var(--nequi-text-gray);"></i>
                 </div>
-                <div class="sheet-card" onclick="showToast('Evalúanos - Próximamente', 'info')">
+                <div class="sheet-card" onclick="showComingSoon()">
                     <div class="card-icon"><i data-lucide="star" style="color:#FFB800;"></i></div>
                     <div class="card-text"><h4>Evalúanos</h4></div>
                     <i data-lucide="chevron-right" style="color:var(--nequi-text-gray);"></i>
                 </div>
-                <div class="sheet-card" onclick="showToast('Valida tu identidad - Próximamente', 'info')">
+                <div class="sheet-card" onclick="showComingSoon()">
                     <div class="card-icon"><i data-lucide="fingerprint" style="color:var(--nequi-magenta);"></i></div>
                     <div class="card-text">
                         <h4>Valida tu identidad</h4>
@@ -1182,7 +1182,7 @@
                             pattern="[0-9]*" style="color: #666666;">
                         <label class="floating-label">¿A quién vas a pedir?</label>
                         <i data-lucide="user-plus" style="color: var(--nequi-magenta); cursor: pointer;"
-                            onclick="showToast('Contactos - Próximamente', 'info')"></i>
+                            onclick="showComingSoon()"></i>
                     </div>
                 </div>
 
