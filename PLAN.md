@@ -90,6 +90,25 @@ Clon funcional de la app Nequi Colombia — web app + Android (Capacitor) + scri
 - [x] PNGs organizados en `www/img/`
 - [x] Recuperación de trabajo perdido desde APK instalado en celular vía `adb`
 
+### Corregido el 2026-05-16
+- [x] Cambio global `type="tel"` → `type="number"` en inputs numéricos
+- [x] `login-phone` restaurado a `type="tel"` (readonly display)
+- [x] 16 PNGs faltantes restaurados desde APK del celular
+- [x] `logo_créditos.png` renombrado a `logo_creditos.png` (sin acento)
+- [x] Rutas rotas corregidas (`logo_créditos.png` sin prefijo `img/`)
+- [x] Status bar nativa con `@capacitor/status-bar` plugin
+- [x] `styles.xml`: `statusBarColor` → `#200020`, `windowLightStatusBar=false`
+- [x] `setStatusBarTheme()` ahora controla la status bar nativa por pantalla
+- [x] Icono "Disponible" reemplazado por `img_disponible.png` (selector origen + confirmación)
+- [x] Texto "Disponible" cambiado de `color: white` a `color: var(--nequi-purple-dark)`
+- [x] Botón "Sigue" se deshabilita (pálido) hasta llenar Cel y Cuanto
+- [x] `banner_inicio.jpeg` full screen antes del login, se cierra al tocar
+- [x] Banner-inicio respeta safe area (`top: var(--system-status-safe-top)`)
+
+### En progreso
+- [ ] Splash de inicio con logo Nequi animado (reemplazar `#splash-screen`)
+- [ ] Splash actual (puntos saltando) queda como `#loading-overlay` genérico
+
 ## Notas
 - `Codigos.txt` está vacío
 - `service-account-key.json` está en `.gitignore`
@@ -98,3 +117,5 @@ Clon funcional de la app Nequi Colombia — web app + Android (Capacitor) + scri
 - Migración automática de hashes legacy (`_nequi_pin_2026`)
 - Todos los cambios se commitean después de cada corrección
 - PNGs están en `www/img/` (antes en `www/`)
+- `@capacitor/status-bar@8.0.2` instalado para control nativo de status bar
+- `@capacitor/cli` instalado globalmente para comandos `cap`
