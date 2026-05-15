@@ -1312,13 +1312,17 @@ function initSplashAnimation() {
     rightImg.style.width = w + 'px';
     rightImg.style.left = (-split) + 'px';
 
+    const hideLeft = -(split + w);
+
+    rightEl.style.clipPath = 'inset(0 0% 0 0)';
+
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             leftEl.style.transition = 'left 1.2s ease-in-out';
-            rightEl.style.transition = 'left 1.2s ease-in-out, opacity 1.2s ease-in-out';
+            rightEl.style.transition = 'left 1.2s ease-in-out, clip-path 1.2s ease-in-out';
             leftEl.style.left = centerN + 'px';
-            rightEl.style.left = centerN + 'px';
-            rightEl.style.opacity = '0';
+            rightEl.style.left = hideLeft + 'px';
+            rightEl.style.clipPath = 'inset(0 100% 0 0)';
         });
     });
 }
