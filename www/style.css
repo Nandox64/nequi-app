@@ -2198,7 +2198,7 @@ body.hide-nav #btn-open-fab {
 .splash-logo-wrapper {
     position: relative;
     width: 80%;
-    max-width: 380px;
+    max-width: 340px;
     aspect-ratio: 1200 / 393;
     overflow: hidden;
 }
@@ -2211,34 +2211,19 @@ body.hide-nav #btn-open-fab {
 }
 
 .splash-logo-left {
-    left: 0;
-    width: 33%;
     z-index: 2;
-    background: url('img/logo_nequi_2.png') no-repeat;
-    background-size: 300% 100%;
-    background-position: 0 0;
-    animation: slideN 1.2s ease-in-out forwards;
 }
 
 .splash-logo-right {
-    left: 33%;
-    width: 67%;
     z-index: 1;
-    background: url('img/logo_nequi_2.png') no-repeat;
-    background-size: 149.25% 100%;
-    background-position: right 0;
-    animation: slideEqui 1.2s ease-in-out forwards;
 }
 
-@keyframes slideN {
-    0% { left: 0; }
-    100% { left: 17%; }
-}
-
-@keyframes slideEqui {
-    0% { left: 33%; opacity: 1; }
-    75% { opacity: 1; }
-    100% { left: 17%; opacity: 0; }
+.splash-logo-img {
+    display: block;
+    max-width: none;
+    height: 100%;
+    position: absolute;
+    top: 0;
 }
 
 /* Movimientos Styles */

@@ -1290,9 +1290,43 @@ async function checkAppVersion() {
     return { needsUpdate: false };
 }
 
+function initSplashAnimation() {
+    const wrapper = document.getElementById('splash-logo-wrapper');
+    if (!wrapper) return;
+    const w = wrapper.offsetWidth;
+    const split = Math.round(w * 0.328);
+    const centerN = Math.round((w / 2) - (split / 2));
+
+    const leftEl = document.getElementById('splash-logo-left');
+    const rightEl = document.getElementById('splash-logo-right');
+    const leftImg = document.getElementById('splash-logo-left-img');
+    const rightImg = document.getElementById('splash-logo-right-img');
+    if (!leftEl || !rightEl || !leftImg || !rightImg) return;
+
+    leftEl.style.left = '0px';
+    leftEl.style.width = split + 'px';
+    rightEl.style.left = split + 'px';
+    rightEl.style.width = (w - split) + 'px';
+    leftImg.style.width = w + 'px';
+    leftImg.style.left = '0px';
+    rightImg.style.width = w + 'px';
+    rightImg.style.left = (-split) + 'px';
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            leftEl.style.transition = 'left 1.2s ease-in-out';
+            rightEl.style.transition = 'left 1.2s ease-in-out, opacity 1.2s ease-in-out';
+            leftEl.style.left = centerN + 'px';
+            rightEl.style.left = centerN + 'px';
+            rightEl.style.opacity = '0';
+        });
+    });
+}
+
 async function initApp() {
     try {
         const splash = document.getElementById('splash-screen');
+        initSplashAnimation();
 
         // Garantizar que el splash desaparezca incluso si algo falla
         setTimeout(() => {
