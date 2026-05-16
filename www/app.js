@@ -1301,7 +1301,7 @@ async function initApp() {
     try {
         const splash = document.getElementById('splash-screen');
 
-        // El splash se oculta después de 2.2 segundos (1.2s de animación + margen)
+        // El splash se oculta después de 7 segundos para permitir el loop del punto (2s de intro + 3 loops de 1.5s)
         setTimeout(() => {
             if (splash) {
                 splash.style.opacity = '0';
@@ -1310,7 +1310,7 @@ async function initApp() {
                     // showBannerInicio(); // Desactivado temporalmente
                 }, 400);
             }
-        }, 2200);
+        }, 7000);
 
         try {
             await loadDB();

@@ -2160,18 +2160,40 @@ body.hide-nav #btn-open-fab {
     transform-origin: bottom right;
     animation: slidePuntoArc 2s ease-in-out forwards;
 }
-
-.splash-logo-punto::after {
-    content: '';
+/* Contenedor padre para cada punto que maneja ÚNICAMENTE la rotación */
+.dot-rotator {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background: url('img/logo_punto.png') center / 100% 100% no-repeat;
-    /* Eje de rotación en el centro aproximado del cuadradito (13% desde arriba) */
-    transform-origin: 50% 13%;
-    animation: slidePuntoCounter 2s ease-in-out forwards;
+    height: 26.13%; /* Ocupa el espacio del cuadrado original */
+    transform-origin: 50% 50%; /* Rota siempre desde el centro */
+    animation: 
+        slidePuntoCounter 2s ease-in-out forwards,
+        dotSpinLoop 1.5s ease-in-out 2s 3 forwards;
+}
+
+/* Base geométrica para los cuadrados (sin animación aquí) */
+.splash-css-dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Toma el tamaño del dot-rotator */
+    background-color: #200020;
+    border-radius: 20%;
+}
+
+/* Estirador 1: Se ancla abajo-izquierda y se estira hacia arriba-derecha */
+.dot-stretch-1 {
+    transform-origin: bottom left;
+    animation: dotStretch 1.5s ease-in-out 2s 3 forwards;
+}
+
+/* Estirador 2: Se ancla arriba-derecha y se estira hacia abajo-izquierda */
+.dot-stretch-2 {
+    transform-origin: top right;
+    animation: dotStretch 1.5s ease-in-out 2s 3 forwards;
 }
 
 .splash-logo-white-wall {
@@ -2223,6 +2245,19 @@ body.hide-nav #btn-open-fab {
 @keyframes slidePuntoCounter {
     0%, 70% { transform: rotate(0deg); }
     100% { transform: rotate(-82deg); } /* Contragiro para mantenerlo derecho */
+}
+
+@keyframes dotSpinLoop {
+    0% { transform: rotate(-82deg); }
+    40% { transform: rotate(-82deg); } /* Quieto durante el estiramiento */
+    100% { transform: rotate(-442deg); } /* Giro antihorario 360deg después del estiramiento */
+}
+
+@keyframes dotStretch {
+    0% { transform: scale(1); }
+    20% { transform: scale(1.3); } /* Se estira hacia la esquina contraria */
+    40% { transform: scale(1); } /* Regresa a su tamaño original unido */
+    100% { transform: scale(1); } /* Se queda quieto mientras el contenedor gira */
 }
 
 @keyframes slideEqui {
