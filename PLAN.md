@@ -108,6 +108,7 @@ Clon funcional de la app Nequi Colombia — web app + Android (Capacitor) + scri
 ### En progreso
 - [x] Splash de inicio con logo Nequi animado (N-equi split con desaparición de 'equi')
 - [x] Splash actual (puntos saltando) queda como `#loading-overlay` genérico
+- [ ] Banner-inicio (desactivado temporalmente para desarrollo)
 
 ## Notas
 - `Codigos.txt` está vacío

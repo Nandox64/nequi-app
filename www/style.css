@@ -2136,46 +2136,97 @@ body.hide-nav #btn-open-fab {
     overflow: hidden;
 }
 
-.splash-logo-half {
+.splash-logo-part {
     position: absolute;
     top: 0;
     height: 100%;
-    overflow: hidden;
+    overflow: visible;
 }
 
-.splash-logo-left {
-    box-sizing: content-box;
+.splash-logo-left-group {
+    position: absolute;
+    top: 0;
     left: 0;
-    width: 33%;
+    width: 33.0833%;
+    height: 100%;
+    z-index: 2;
+    animation: slideGroup 2s ease-in-out forwards;
+}
+
+.splash-logo-punto {
+    left: 0;
+    width: 24.6851%;
+    z-index: 3;
+    transform-origin: bottom right;
+    animation: slidePuntoArc 2s ease-in-out forwards;
+}
+
+.splash-logo-punto::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('img/logo_punto.png') center / 100% 100% no-repeat;
+    /* Eje de rotación en el centro aproximado del cuadradito (13% desde arriba) */
+    transform-origin: 50% 13%;
+    animation: slidePuntoCounter 2s ease-in-out forwards;
+}
+
+.splash-logo-white-wall {
+    position: absolute;
+    top: 0;
+    right: 75.3149%; /* Termina exactamente donde empieza la N */
+    width: 100vw;
+    height: 100%;
+    background: #fff;
+    z-index: 1; /* Debajo de N y Punto, pero sobre Equi (porque el grupo es z-index 2) */
+}
+
+.splash-logo-n {
+    left: 24.6851%;
+    width: 75.3149%;
     z-index: 2;
     background: 
-        url('img/logo_nequi_2.png') 0 0 / 300% 100% no-repeat,
-        linear-gradient(to right, #fff 0%, #fff calc(100% - 8px), transparent calc(100% - 8px), transparent 100%) 0 0 / 100% 100% no-repeat;
-    border-left: 100vw solid #fff;
-    margin-left: -100vw;
-    transform-origin: 100vw 100%;
-    animation: slideN 2s ease-in-out forwards;
+        url('img/logo_n_sin_punto.png') center / 100% 100% no-repeat,
+        linear-gradient(to right, #fff 0%, #fff calc(100% - 8px), transparent calc(100% - 8px), transparent 100%);
+    
+    transform-origin: bottom left;
+    animation: dropN 2s ease-in-out forwards;
 }
 
-.splash-logo-right {
-    left: 33%;
-    width: 67%;
+.splash-logo-equi {
+    left: 33.0832%;
+    width: 66.9166%;
     z-index: 1;
-    background: url('img/logo_nequi_2.png') no-repeat;
-    background-size: 149.25% 100%;
-    background-position: right 0;
+    background: url('img/logo_equi.png') center / 100% 100% no-repeat;
     animation: slideEqui 2s ease-in-out forwards;
 }
 
-@keyframes slideN {
-    0% { left: 0; transform: rotate(0deg); }
-    60% { left: 33.5%; transform: rotate(0deg); }
-    70% { left: 33.5%; transform: rotate(0deg); }
-    100% { left: 33.5%; transform: rotate(90deg); }
+@keyframes slideGroup {
+    0% { left: 0; }
+    60% { left: 33.5%; }
+    100% { left: 33.5%; }
+}
+
+@keyframes dropN {
+    0%, 70% { transform: rotate(0deg); }
+    100% { transform: rotate(90deg); } /* Gira y se oculta */
+}
+
+@keyframes slidePuntoArc {
+    0%, 70% { transform: rotate(0deg); }
+    100% { transform: rotate(82deg); } /* Se detiene unos grados antes */
+}
+
+@keyframes slidePuntoCounter {
+    0%, 70% { transform: rotate(0deg); }
+    100% { transform: rotate(-82deg); } /* Contragiro para mantenerlo derecho */
 }
 
 @keyframes slideEqui {
-    0% { left: 33%; opacity: 1; }
+    0% { left: 33.0832%; opacity: 1; }
     60% { left: -5%; opacity: 1; }
     61% { left: -5%; opacity: 0; }
     100% { left: -5%; opacity: 0; }
