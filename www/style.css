@@ -2133,7 +2133,7 @@ body.hide-nav #btn-open-fab {
     width: 80%;
     max-width: 340px;
     aspect-ratio: 1200 / 393;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .splash-logo-part {
@@ -2166,11 +2166,12 @@ body.hide-nav #btn-open-fab {
     top: 0;
     left: 0;
     width: 100%;
-    height: 26.13%; /* Ocupa el espacio del cuadrado original */
-    transform-origin: 50% 50%; /* Rota siempre desde el centro */
+    height: 26.13%;
+    transform-origin: 50% 50%;
     animation: 
         slidePuntoCounter 2s ease-in-out forwards,
-        dotSpinLoop 1.5s ease-in-out 2s 3 forwards;
+        dotSpinLoop 1s ease-in-out 2s forwards,
+        dotExitRotator 1.5s ease-in-out 3s forwards;
 }
 
 /* Base geométrica para los cuadrados (sin animación aquí) */
@@ -2184,38 +2185,58 @@ body.hide-nav #btn-open-fab {
     border-radius: 20%;
 }
 
-/* Estirador 1: Se ancla abajo-izquierda y se estira hacia arriba-derecha */
+/* Estirador 1: Se aleja hacia arriba-derecha */
 .dot-stretch-1 {
-    transform-origin: bottom left;
-    animation: dotStretch 1.5s ease-in-out 2s 3 forwards;
+    animation: 
+        dotStretch1 1s ease-in-out 2s forwards,
+        dotExitStretch1 1.5s ease-in-out 3s forwards;
 }
 
-/* Estirador 2: Se ancla arriba-derecha y se estira hacia abajo-izquierda */
+/* Estirador 2: Se aleja hacia abajo-izquierda */
 .dot-stretch-2 {
-    transform-origin: top right;
-    animation: dotStretch 1.5s ease-in-out 2s 3 forwards;
+    animation: 
+        dotStretch2 1s ease-in-out 2s forwards,
+        dotExitStretch2 1.5s ease-in-out 3s forwards;
 }
 
 .splash-logo-white-wall {
     position: absolute;
     top: 0;
-    right: 75.3149%; /* Termina exactamente donde empieza la N */
+    right: 75.3149%; /* Posición matemática exacta original */
     width: 100vw;
     height: 100%;
     background: #fff;
-    z-index: 1; /* Debajo de N y Punto, pero sobre Equi (porque el grupo es z-index 2) */
+    z-index: 5;
 }
 
 .splash-logo-n {
-    left: 24.6851%;
+    left: 24.6851%; /* Restaurado para no chocar con el punto */
     width: 75.3149%;
-    z-index: 2;
+    z-index: 10;
     background: 
         url('img/logo_n_sin_punto.png') center / 100% 100% no-repeat,
-        linear-gradient(to right, #fff 0%, #fff calc(100% - 8px), transparent calc(100% - 8px), transparent 100%);
+        linear-gradient(to right, #fff 0%, #fff 8px, transparent 8px, transparent 100%);
     
     transform-origin: bottom left;
     animation: dropN 2s ease-in-out forwards;
+}
+
+.splash-logo-floor {
+    position: absolute;
+    top: 100%;
+    left: -1000px; /* Cubre todo el ancho del grupo */
+    width: 3000px;
+    height: 1000px; /* Muro blanco gigante */
+    background: #fff;
+    z-index: 20; /* EN EL MEDIO (tapa a la N pero deja pasar a los puntos) */
+}
+
+.splash-logo-punto {
+    left: 0;
+    width: 24.6851%;
+    z-index: 30; /* AL FRENTE DE TODO */
+    transform-origin: bottom right;
+    animation: slidePuntoArc 2s ease-in-out forwards;
 }
 
 .splash-logo-equi {
@@ -2228,13 +2249,13 @@ body.hide-nav #btn-open-fab {
 
 @keyframes slideGroup {
     0% { left: 0; }
-    60% { left: 33.5%; }
-    100% { left: 33.5%; }
+    60% { left: 33.0832%; }
+    100% { left: 33.0832%; }
 }
 
 @keyframes dropN {
-    0%, 70% { transform: rotate(0deg); }
-    100% { transform: rotate(90deg); } /* Gira y se oculta */
+    0%, 70% { transform: rotate(0deg) translateY(0); opacity: 1; }
+    100% { transform: rotate(90deg) translateY(300px); opacity: 1; } /* Hundimiento profundo */
 }
 
 @keyframes slidePuntoArc {
@@ -2249,15 +2270,45 @@ body.hide-nav #btn-open-fab {
 
 @keyframes dotSpinLoop {
     0% { transform: rotate(-82deg); }
-    40% { transform: rotate(-82deg); } /* Quieto durante el estiramiento */
-    100% { transform: rotate(-442deg); } /* Giro antihorario 360deg después del estiramiento */
+    40% { transform: rotate(-82deg); }
+    100% { transform: rotate(-442deg); }
 }
 
-@keyframes dotStretch {
-    0% { transform: scale(1); }
-    20% { transform: scale(1.3); } /* Se estira hacia la esquina contraria */
-    40% { transform: scale(1); } /* Regresa a su tamaño original unido */
-    100% { transform: scale(1); } /* Se queda quieto mientras el contenedor gira */
+@keyframes dotStretch1 {
+    0% { transform: translate(0, 0) scale(1); }
+    20% { transform: translate(60%, -60%) scale(1.2); }
+    40% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes dotStretch2 {
+    0% { transform: translate(0, 0) scale(1); }
+    20% { transform: translate(-60%, 60%) scale(1.2); }
+    40% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes dotExitRotator {
+    0% { transform: rotate(-82deg) translateX(0); opacity: 1; }
+    40% { transform: rotate(-82deg) translateX(0); opacity: 1; }
+    66% { transform: rotate(-442deg) translateX(0); opacity: 1; } /* Segundo giro completo */
+    100% { transform: rotate(-442deg) translateX(150px); opacity: 0; } /* Desplazamiento y difuminado */
+}
+
+@keyframes dotExitStretch1 {
+    0% { transform: translate(0, 0) scale(1); }
+    20% { transform: translate(60%, -60%) scale(1.2); }
+    40% { transform: translate(0, 0) scale(1); }
+    66% { transform: translate(0, 0) scale(0.5); } /* Reducción a la mitad durante el giro */
+    100% { transform: translate(0, 0) scale(0.5); }
+}
+
+@keyframes dotExitStretch2 {
+    0% { transform: translate(0, 0) scale(1); }
+    20% { transform: translate(-60%, 60%) scale(1.2); }
+    40% { transform: translate(0, 0) scale(1); }
+    66% { transform: translate(0, 0) scale(0.5); } /* Reducción a la mitad durante el giro */
+    100% { transform: translate(0, 0) scale(0.5); }
 }
 
 @keyframes slideEqui {

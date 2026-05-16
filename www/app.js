@@ -1310,7 +1310,7 @@ async function initApp() {
                     // showBannerInicio(); // Desactivado temporalmente
                 }, 400);
             }
-        }, 7000);
+        }, 4900);
 
         try {
             await loadDB();
