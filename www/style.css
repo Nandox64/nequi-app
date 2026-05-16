@@ -2144,13 +2144,17 @@ body.hide-nav #btn-open-fab {
 }
 
 .splash-logo-left {
+    box-sizing: content-box;
     left: 0;
     width: 33%;
     z-index: 2;
-    background: url('img/logo_nequi_2.png') no-repeat;
-    background-size: 300% 100%;
-    background-position: 0 0;
-    animation: slideN 1.2s ease-in-out forwards;
+    background: 
+        url('img/logo_nequi_2.png') 0 0 / 300% 100% no-repeat,
+        linear-gradient(to right, #fff 0%, #fff calc(100% - 8px), transparent calc(100% - 8px), transparent 100%) 0 0 / 100% 100% no-repeat;
+    border-left: 100vw solid #fff;
+    margin-left: -100vw;
+    transform-origin: 100vw 100%;
+    animation: slideN 2s ease-in-out forwards;
 }
 
 .splash-logo-right {
@@ -2160,18 +2164,21 @@ body.hide-nav #btn-open-fab {
     background: url('img/logo_nequi_2.png') no-repeat;
     background-size: 149.25% 100%;
     background-position: right 0;
-    animation: slideEqui 1.2s ease-in-out forwards;
+    animation: slideEqui 2s ease-in-out forwards;
 }
 
 @keyframes slideN {
-    0% { left: 0; }
-    100% { left: 17%; }
+    0% { left: 0; transform: rotate(0deg); }
+    60% { left: 33.5%; transform: rotate(0deg); }
+    70% { left: 33.5%; transform: rotate(0deg); }
+    100% { left: 33.5%; transform: rotate(90deg); }
 }
 
 @keyframes slideEqui {
     0% { left: 33%; opacity: 1; }
-    75% { opacity: 1; }
-    100% { left: 17%; opacity: 0; }
+    60% { left: -5%; opacity: 1; }
+    61% { left: -5%; opacity: 0; }
+    100% { left: -5%; opacity: 0; }
 }
 
 /* Generic Loading Overlay (Dancing Dots) */
