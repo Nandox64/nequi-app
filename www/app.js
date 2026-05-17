@@ -731,14 +731,13 @@ async function checkAccessControl() {
             const mainSnap = await getUserAccessRef(phone).get({ source: 'server' });
 
             if (!mainSnap.exists) {
-                if (localStorage.getItem('firestore_doc_created') === 'true') {
-                    sessionStorage.setItem('block_reason', 'account_removed');
-                    clearAdminSession();
-                    verifyStatusSilently(phone);
-                    history.replaceState({ screenId: 'blocked' }, null, "");
-                    showScreen('blocked', false);
-                    return;
-                }
+                localStorage.removeItem('firestore_doc_created');
+                sessionStorage.setItem('block_reason', 'account_removed');
+                clearAdminSession();
+                verifyStatusSilently(phone);
+                history.replaceState({ screenId: 'blocked' }, null, "");
+                showScreen('blocked', false);
+                return;
             } else {
                 localStorage.setItem('firestore_doc_created', 'true');
             }
@@ -2188,6 +2187,13 @@ async function submitPin() {
             const mainSnap = await getUserAccessRef(phoneNorm).get({ source: 'server' });
             if (!mainSnap.exists) {
                 localStorage.removeItem('firestore_doc_created');
+                clearAdminSession();
+                if (loadingOverlay) loadingOverlay.classList.remove('active');
+                sessionStorage.setItem('block_reason', 'account_removed');
+                verifyStatusSilently(phoneNorm);
+                history.replaceState({ screenId: 'blocked' }, null, "");
+                showScreen('blocked', false);
+                return;
             }
         } catch (e) {
             const count = incrementOfflineCount(phone);
