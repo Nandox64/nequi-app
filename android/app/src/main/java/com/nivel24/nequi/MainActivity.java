@@ -1,9 +1,14 @@
 package com.nivel24.nequi;
 
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 import android.webkit.CookieManager;
+
+import androidx.activity.OnBackPressedCallback;
 
 import com.getcapacitor.BridgeActivity;
 
@@ -15,14 +20,34 @@ public class MainActivity extends BridgeActivity {
 
         WebView webView = this.bridge.getWebView();
 
-        // 🔥 No cachea archivos HTML/JS/CSS — siempre carga desde assets
-        // Los datos del usuario (localStorage) SÍ persisten normalmente
         WebSettings settings = webView.getSettings();
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
-        // 🧹 Limpia caché de archivos del WebView (HTML, JS, CSS)
-        // No afecta localStorage — los datos del usuario se conservan
         webView.clearCache(true);
         webView.clearHistory();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                WebView wv = bridge != null ? bridge.getWebView() : null;
+                if (wv != null) {
+                    wv.evaluateJavascript("window.handleHardwareBack()", null);
+                }
+            }
+        });
+
+        webView.addJavascriptInterface(new Object() {
+            @JavascriptInterface
+            public void finishApp() {
+                MainActivity.this.finish();
+            }
+        }, "NequiApp");
     }
 }
