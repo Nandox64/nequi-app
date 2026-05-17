@@ -420,7 +420,7 @@
         </section>
 
         <!-- Send Money Screen -->
-        <section id="screen-send" class="screen" style="background: var(--nequi-white); z-index: 2000;">
+        <section id="screen-send" class="screen" style="background: var(--nequi-white);">
             <div style="padding: 60px 20px 10px 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <i data-lucide="arrow-left" class="btn-back" onclick="showScreen('dashboard')"
@@ -450,7 +450,7 @@
             <div class="content">
                 <div class="form-group" style="margin-bottom: 6px;">
                     <div class="input-container floating">
-                        <input type="number" id="input-phone" placeholder=" " maxlength="10" inputmode="numeric"
+                        <input type="text" id="input-phone" placeholder=" " maxlength="10" inputmode="numeric"
                             pattern="[0-9]*" style="color: var(--nequi-text);" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">Cel</label>
                         <i data-lucide="user-plus" onclick="showContactPicker('input-phone')" style="color: var(--nequi-text-gray); cursor: pointer;"></i>
@@ -463,7 +463,7 @@
 
                 <div class="form-group" style="margin-bottom: 6px;">
                     <div class="input-container floating">
-                        <input type="number" id="input-amount" placeholder=" " style="color: var(--nequi-text);">
+                        <input type="text" id="input-amount" placeholder=" " inputmode="numeric" style="color: var(--nequi-text);">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">¿Cuánto?</label>
                     </div>
                     <p id="msg-amount" class="field-message">&nbsp;</p>
@@ -865,19 +865,19 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <div class="input-container floating">
-                        <input type="number" id="bancolombia-account" placeholder=" " maxlength="16" inputmode="numeric" style="color: var(--nequi-text);">
+                        <input type="text" id="bancolombia-account" placeholder=" " maxlength="16" inputmode="numeric" style="color: var(--nequi-text);">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">Número de cuenta</label>
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <div class="input-container floating">
-                        <input type="number" id="bancolombia-doc" placeholder=" " maxlength="10" inputmode="numeric" style="color: var(--nequi-text);">
+                        <input type="text" id="bancolombia-doc" placeholder=" " maxlength="10" inputmode="numeric" style="color: var(--nequi-text);">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">Documento del titular</label>
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <div class="input-container floating">
-                        <input type="number" id="bancolombia-amount" placeholder=" " style="color: var(--nequi-text);">
+                        <input type="text" id="bancolombia-amount" placeholder=" " inputmode="numeric" style="color: var(--nequi-text);">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">¿Cuánto?</label>
                     </div>
                 </div>
@@ -904,7 +904,7 @@
                 <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Envía plata a otros bancos usando solo el número de celular.</p>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <div class="input-container floating">
-                        <input type="number" id="transfiya-phone" placeholder=" " maxlength="10" inputmode="numeric" style="color: var(--nequi-text);">
+                        <input type="text" id="transfiya-phone" placeholder=" " maxlength="10" inputmode="numeric" style="color: var(--nequi-text);">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">Celular del destinatario</label>
                     </div>
                 </div>
@@ -916,7 +916,7 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <div class="input-container floating">
-                        <input type="number" id="transfiya-amount" placeholder=" " style="color: var(--nequi-text);">
+                        <input type="text" id="transfiya-amount" placeholder=" " inputmode="numeric" style="color: var(--nequi-text);">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">¿Cuánto?</label>
                     </div>
                 </div>
@@ -949,13 +949,13 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <div class="input-container floating">
-                        <input type="number" id="servicio-ref" placeholder=" " maxlength="20" inputmode="numeric" style="color: var(--nequi-text);">
+                        <input type="text" id="servicio-ref" placeholder=" " maxlength="20" inputmode="numeric" style="color: var(--nequi-text);">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">Número de factura / referencia</label>
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <div class="input-container floating">
-                        <input type="number" id="servicio-amount" placeholder=" " style="color: var(--nequi-text);">
+                        <input type="text" id="servicio-amount" placeholder=" " inputmode="numeric" style="color: var(--nequi-text);">
                         <label class="floating-label" style="color: var(--nequi-text-gray);">Valor a pagar</label>
                     </div>
                 </div>
@@ -1029,13 +1029,13 @@
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
                         <div class="input-container floating">
-                            <input type="number" id="breb-send-phone" placeholder=" " maxlength="10" inputmode="numeric" style="color: #333;">
+                            <input type="text" id="breb-send-phone" placeholder=" " maxlength="10" inputmode="numeric" style="color: #333;">
                             <label class="floating-label">Celular destino</label>
                         </div>
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
                         <div class="input-container floating">
-                            <input type="number" id="breb-send-amount" placeholder=" " style="color: #333;">
+                            <input type="text" id="breb-send-amount" placeholder=" " inputmode="numeric" style="color: #333;">
                             <label class="floating-label">¿Cuánto?</label>
                         </div>
                     </div>
@@ -1251,7 +1251,7 @@
                     </div>
                     <div class="form-group" style="margin-bottom: 30px;">
                         <div class="input-container floating">
-                            <input type="number" id="new-client-phone" placeholder=" " maxlength="10" inputmode="numeric" pattern="[0-9]*" style="color: #333;">
+                            <input type="text" id="new-client-phone" placeholder=" " maxlength="10" inputmode="numeric" pattern="[0-9]*" style="color: #333;">
                             <label class="floating-label">Número celular</label>
                         </div>
                     </div>
@@ -1276,7 +1276,7 @@
                     </div>
                     <div class="form-group" style="margin-bottom: 30px;">
                         <div class="input-container floating">
-                            <input type="number" id="new-contact-phone" placeholder=" " maxlength="10"
+                            <input type="text" id="new-contact-phone" placeholder=" " maxlength="10"
                                 inputmode="numeric" pattern="[0-9]*"
                                 style="color: #333;">
                             <label class="floating-label">Número celular</label>
@@ -1356,7 +1356,7 @@
             <div class="content">
                 <div class="form-group" style="margin-bottom: 30px;">
                     <div class="input-container floating">
-                        <input type="number" id="pide-phone" placeholder=" " maxlength="10" inputmode="numeric"
+                        <input type="text" id="pide-phone" placeholder=" " maxlength="10" inputmode="numeric"
                             pattern="[0-9]*" style="color: #666666;">
                         <label class="floating-label">¿A quién vas a pedir?</label>
                         <i data-lucide="user-plus" style="color: var(--nequi-magenta); cursor: pointer;"
@@ -1366,7 +1366,7 @@
 
                 <div class="form-group" style="margin-bottom: 30px;">
                     <div class="input-container floating">
-                        <input type="number" id="pide-amount" placeholder=" " style="color: #666666;">
+                        <input type="text" id="pide-amount" placeholder=" " inputmode="numeric" style="color: #666666;">
                         <label class="floating-label">¿Cuánto?</label>
                     </div>
                 </div>
@@ -1477,7 +1477,7 @@
                 <div style="margin-bottom: 16px;">
                     <p style="font-size: 14px; font-weight: 700; color: var(--nequi-magenta); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">¿Cuánto vas a sacar?</p>
                     <div class="input-container floating" style="background: white; border-radius: 10px; border: 1px solid var(--nequi-gray-light);">
-                        <input type="number" id="withdraw-amount" placeholder=" " min="10000" step="10000" style="color: #333; font-size: 20px; font-weight: 700; padding: 18px 15px 8px; width: 100%; border: none; outline: none; background: transparent;">
+                        <input type="text" id="withdraw-amount" placeholder=" " inputmode="numeric" min="10000" step="10000" style="color: #333; font-size: 20px; font-weight: 700; padding: 18px 15px 8px; width: 100%; border: none; outline: none; background: transparent;">
                         <label class="floating-label" style="font-size: 13px; top: 4px;">Monto a retirar</label>
                     </div>
                     <p style="font-size: 12px; color: #888; margin-top: 6px;">Monto mínimo $10.000 — montos cerrados en cajeros</p>
@@ -1569,7 +1569,7 @@
                 <div class="form-group" style="width: 100%; margin-bottom: 30px;">
                     <div class="input-container floating"
                         style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                        <input type="number" id="admin-phone" placeholder=" " maxlength="10" autocomplete="tel"
+                        <input type="text" id="admin-phone" placeholder=" " maxlength="10" autocomplete="tel"
                             inputmode="numeric" pattern="[0-9]*"
                             style="color: white; touch-action: manipulation;">
                         <label class="floating-label" style="color: rgba(255,255,255,0.6);">Celular</label>
@@ -1794,9 +1794,39 @@
 
     <!-- Premium Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay" style="display: none;">
-        <div class="dance-container">
-            <div class="dot dot-1"></div>
-            <div class="dot dot-2"></div>
+        <div class="loading-logo-wrapper">
+            <!-- Cargador basado en la mitosis de puntos -->
+            <div class="loading-dot-rotator">
+                <div class="splash-css-dot loading-dot-stretch-1"></div>
+            </div>
+            <div class="loading-dot-rotator">
+                <div class="splash-css-dot loading-dot-stretch-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mandatory Update Screen -->
+    <div id="update-screen" class="update-overlay">
+        <div class="update-content">
+            <div class="update-logo">
+                <!-- Usando el logo por defecto o imagen si existe -->
+                <div style="font-size: 32px; font-weight: 800; color: white; letter-spacing: -1px; margin-bottom: 20px;">Nequi</div>
+            </div>
+            <div class="update-illustration">
+                <div class="rocket-circle">
+                    <i data-lucide="rocket" style="width: 48px; height: 48px; color: #DA291C;"></i>
+                </div>
+            </div>
+            <h2 id="update-title">¡Tu Nequi necesita un impulso!</h2>
+            <p id="update-message">Actualiza a la última versión para disfrutar de nuevas funciones y la máxima seguridad.</p>
+            
+            <div class="update-actions">
+                <a href="#" id="btn-update-now" class="btn-update-main">Actualizar ahora</a>
+            </div>
+            
+            <div class="update-footer">
+                <p>Versión instalada: <span id="current-version-tag"></span></p>
+            </div>
         </div>
     </div>
 
@@ -1854,7 +1884,7 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 30px;">
                     <div class="input-container floating">
-                        <input type="number" id="edit-phone" placeholder=" " maxlength="10" inputmode="numeric" pattern="[0-9]*" style="color: #333;">
+                        <input type="text" id="edit-phone" placeholder=" " maxlength="10" inputmode="numeric" pattern="[0-9]*" style="color: #333;">
                         <label class="floating-label">Celular</label>
                     </div>
                 </div>
@@ -1877,7 +1907,7 @@
             <div class="sheet-content">
                 <div class="form-group" style="margin-bottom: 30px;">
                     <div class="input-container floating">
-                        <input type="number" id="colchon-amount" placeholder=" " style="color: #333;">
+                        <input type="text" id="colchon-amount" placeholder=" " inputmode="numeric" style="color: #333;">
                         <label class="floating-label">¿Cuánto?</label>
                     </div>
                 </div>
@@ -1928,7 +1958,7 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 30px;">
                     <div class="input-container floating">
-                        <input type="number" id="pocket-amount" placeholder=" " style="color: #333;">
+                        <input type="text" id="pocket-amount" placeholder=" " inputmode="numeric" style="color: #333;">
                         <label class="floating-label">¿Cuánto quieres ahorrar?</label>
                     </div>
                 </div>
@@ -2084,7 +2114,7 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <div class="input-container floating">
-                        <input type="number" id="contact-form-phone" placeholder=" " maxlength="10" inputmode="numeric" style="color: #333;">
+                        <input type="text" id="contact-form-phone" placeholder=" " maxlength="10" inputmode="numeric" style="color: #333;">
                         <label class="floating-label">Celular</label>
                     </div>
                 </div>

@@ -14,11 +14,12 @@ window.addEventListener('unhandledrejection', function (e) {
     if (el) { el.innerText = 'Promise: ' + (e.reason?.message || e.reason || '?'); el.style.display = 'block'; }
 });
 
-const APP_VERSION = '20260509';
+const APP_VERSION = '20260517';
 const DEFAULT_DB_STATE = JSON.parse(JSON.stringify(db));
 const ADMIN_ACCESS_COLLECTION = 'users_access';
 const USER_DATA_COLLECTION = 'users_data';
 const AUTH_EMAIL_DOMAIN = 'phone.nequi.co';
+const navHistory = [];
 
 // --- Device identification for PIN salt ---
 function getDeviceId() {
@@ -1245,15 +1246,20 @@ function goToNewLogin() {
     showScreen('admin-login', false);
 }
 
-function showUpdateScreen(updateUrl) {
-    const el = document.getElementById('screen-update');
-    const link = document.getElementById('update-download-link');
-    const splash = document.getElementById('splash-screen');
-    if (splash) splash.style.display = 'none';
-    if (link && updateUrl) link.href = updateUrl;
-    if (el) {
-        el.classList.add('active');
-        el.style.display = 'flex';
+function showUpdateScreen(updateUrl, message) {
+    const screen = document.getElementById('update-screen');
+    const btn = document.getElementById('btn-update-now');
+    const msgEl = document.getElementById('update-message');
+    const versionTag = document.getElementById('current-version-tag');
+    
+    if (screen && btn) {
+        if (message) msgEl.innerText = message;
+        if (versionTag) versionTag.innerText = APP_VERSION;
+        btn.href = updateUrl || '#';
+        screen.classList.add('active');
+        
+        // Bloquear scroll y gestos
+        document.body.style.overflow = 'hidden';
         lucide.createIcons();
     }
 }
@@ -1270,22 +1276,26 @@ const navItems = document.querySelectorAll('.bottom-nav .nav-item');
 // Data Loading
 async function checkAppVersion() {
     if (!dbFirestore) return { needsUpdate: false };
-    // Cache: solo verificar Firestore cada 24h
-    const lastCheck = localStorage.getItem('nequi_version_check');
-    if (lastCheck && (Date.now() - parseInt(lastCheck, 10)) < 86400000) {
-        return { needsUpdate: false };
-    }
+    
+    // Eliminamos el cache de 24h para facilitar pruebas
     try {
         const doc = await dbFirestore.collection('config').doc('app_version').get({ source: 'server' });
-        localStorage.setItem('nequi_version_check', String(Date.now()));
         if (doc.exists) {
             const data = doc.data();
-            if (data.forceUpdate && data.minVersion > APP_VERSION) {
-                return { needsUpdate: true, updateUrl: data.updateUrl || '' };
+            // Soporte para ambos nombres de campos (min_version o minVersion)
+            const minV = String(data.min_version || data.minVersion || '0');
+            const force = data.force_update !== undefined ? data.force_update : data.forceUpdate;
+            
+            if (force && minV > APP_VERSION) {
+                return { 
+                    needsUpdate: true, 
+                    updateUrl: data.download_url || data.updateUrl || '#',
+                    message: data.message || 'Necesitas actualizar para seguir usando Nequi.'
+                };
             }
         }
     } catch (e) {
-        // Offline — permite entrada normal
+        if (DEBUG_MODE) console.warn('Error checking version:', e);
     }
     return { needsUpdate: false };
 }
@@ -1301,24 +1311,36 @@ async function initApp() {
     try {
         const splash = document.getElementById('splash-screen');
 
-        // El splash se oculta después de 7 segundos para permitir el loop del punto (2s de intro + 3 loops de 1.5s)
+        // Iniciar animaciones después de 1 segundo de logo estático
+        setTimeout(() => {
+            const animatedElements = document.querySelectorAll('.splash-logo-left-group, .splash-logo-punto, .dot-rotator, .dot-stretch-1, .dot-stretch-2, .splash-logo-n, .splash-logo-equi');
+            animatedElements.forEach(el => {
+                el.style.animationPlayState = 'running';
+            });
+        }, 1000);
+
+        // El splash se oculta después de 6 segundos (1s estático + animaciones)
         setTimeout(() => {
             if (splash) {
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.display = 'none';
-                    // showBannerInicio(); // Desactivado temporalmente
+                    showBannerInicio(); // Reactivado tras finalizar la animación del splash
                 }, 400);
             }
-        }, 4900);
+        }, 6000);
 
         try {
             await loadDB();
 
             const versionCheck = await checkAppVersion();
             if (versionCheck.needsUpdate) {
-                if (splash) { splash.style.display = 'none'; }
-                showUpdateScreen(versionCheck.updateUrl);
+                // Ocultar splash inmediatamente para mostrar el aviso
+                if (splash) { 
+                    splash.style.display = 'none'; 
+                    splash.style.opacity = '0';
+                }
+                showUpdateScreen(versionCheck.updateUrl, versionCheck.message);
                 return;
             }
         } catch (e) {
@@ -1849,6 +1871,7 @@ function showScreen(screenId, pushToHistory = true) {
     }
 
     document.body.classList.toggle('nav-bg-white', screenId === 'movements');
+    document.body.classList.toggle('nav-bg-dark', screenId === 'dashboard');
 
     navItems.forEach(item => {
         item.classList.toggle('active', item.dataset.screen === screenId);
@@ -1893,6 +1916,9 @@ function showScreen(screenId, pushToHistory = true) {
 
     // History API Support
     if (pushToHistory) {
+        if (navHistory.length === 0 || navHistory[navHistory.length - 1] !== screenId) {
+            navHistory.push(screenId);
+        }
         history.pushState({ screenId }, null, "");
     }
 
@@ -1937,24 +1963,29 @@ function closeExitConfirm() {
     if (overlay) overlay.classList.remove('active');
 }
 
-window.addEventListener('popstate', (event) => {
+window.handleHardwareBack = function() {
     const exitOverlay = document.getElementById('exit-confirm-overlay');
 
-    if (currentScreen === 'dashboard') {
-        if (exitOverlay && exitOverlay.classList.contains('active')) {
-            closeExitConfirm();
-            return;
-        }
-        showExitConfirm();
-        history.pushState({ screenId: 'dashboard' }, null, "");
+    if (exitOverlay && exitOverlay.classList.contains('active')) {
+        closeExitConfirm();
         return;
     }
 
-    if (event.state && event.state.screenId) {
-        showScreen(event.state.screenId, false);
-    } else {
-        showScreen('login', false);
+    if (currentScreen === 'dashboard') {
+        showExitConfirm();
+        return;
     }
+
+    if (navHistory.length > 1) {
+        navHistory.pop();
+        showScreen(navHistory[navHistory.length - 1], false);
+    } else {
+        showScreen('dashboard', false);
+    }
+};
+
+window.addEventListener('popstate', () => {
+    window.handleHardwareBack();
 });
 
 const btnExitCancel = document.getElementById('btn-exit-cancel');
@@ -1966,7 +1997,11 @@ const btnExitAccept = document.getElementById('btn-exit-accept');
 if (btnExitAccept) {
     btnExitAccept.addEventListener('click', () => {
         closeExitConfirm();
-        showScreen('login');
+        if (typeof NequiApp !== 'undefined' && NequiApp.finishApp) {
+            NequiApp.finishApp();
+        } else {
+            showScreen('login');
+        }
     });
 }
 
@@ -1981,7 +2016,7 @@ function authenticate() {
         setTimeout(() => {
             overlay.classList.remove('active');
             showScreen('dashboard');
-        }, 3000); // 3 seconds dance for login entry
+        }, 7500); // 4 loops * 1.5s + 1.5s exit = 7.5s
     } else {
         showScreen('dashboard');
     }
@@ -2084,7 +2119,7 @@ function finishPinLogin() {
         setTimeout(() => {
             overlay.classList.remove('active');
             showScreen('dashboard');
-        }, 3000);
+        }, 7500);
     } else {
         showScreen('dashboard');
     }
@@ -2439,7 +2474,7 @@ btnFinalSend.addEventListener('click', () => {
             successToast.classList.add('active');
             setTimeout(() => {
                 successToast.classList.remove('active');
-            }, 3000);
+            }, 7500);
         }
 
         showReceipt(amountVal, "Tu propia cuenta", phoneVal, messageVal);
@@ -2510,7 +2545,7 @@ function showReceipt(amount, name, phone, message, type = 'send') {
         setTimeout(() => {
             overlay.classList.remove('active');
             showScreen('success');
-        }, 3000);
+        }, 7500);
     } else {
         showScreen('success');
     }
@@ -2843,6 +2878,8 @@ function closeSendOptions() {
 function goToSendMoney() {
     closeSendOptions();
     showScreen('send');
+    // Force reflow so Chromium registers inputmode before user taps
+    void document.getElementById('input-phone')?.offsetHeight;
 }
 
 // Add Client Logic
@@ -2977,7 +3014,7 @@ function showConnectionError() {
     setTimeout(() => {
         overlay.classList.remove('active');
         errorOverlay.classList.add('active');
-    }, 8000);
+    }, 7500);
 }
 
 // Attach to global window for inline onclick use if needed
@@ -3030,7 +3067,7 @@ function confirmWithdraw() {
         setTimeout(() => {
             overlay.classList.remove('active');
             completeWithdraw();
-        }, 3000);
+        }, 7500);
     } else {
         completeWithdraw();
     }

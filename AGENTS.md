@@ -10,14 +10,13 @@ Nequi-style banking app using Capacitor Android WebView. Plain HTML/CSS/JS in `w
 - **Backend**: Firebase Admin SDK (`firebase-admin`)
 - **Auth**: PIN-based (SHA-256 hashed + dynamic device salt, stored in localStorage)
 - **Database**: Firestore (collections: `users_data`, `users_access`)
-- **Build**: `npx cap copy android && gradlew.bat assembleDebug`
-- **Dev**: `npx serve . -l 3000`
+- **Build**: see `scripts` in `package.json`
 
 ## Build Commands
 - `npm run dev` — local HTTP server on port 3000
 - `npm run sync` — `npx cap copy android`
 - `npm run build` — debug APK via gradle
-- `npm run install` — `adb install` the debug APK
+- `npm run adb-install` — `adb install` the debug APK
 - `npm run apk` — sync + build (full APK rebuild)
 
 ## Architecture
